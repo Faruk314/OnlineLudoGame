@@ -9,36 +9,37 @@ const redZone = {
   startingPoint: 92,
   border: [
     1, 2, 3, 4, 5, 6, 16, 21, 31, 36, 46, 51, 61, 66, 76, 81, 77, 78, 79, 80,
+    92,
   ],
   playerZones: [33, 34, 48, 49],
   finalZones: [107, 108, 109, 110, 111],
 };
 
 const greenZone = {
-  startingPoint: 1,
+  startingPoint: 24,
   border: [
     10, 11, 12, 13, 14, 15, 25, 30, 40, 45, 55, 60, 70, 75, 85, 86, 87, 88, 89,
-    90,
+    90, 24,
   ],
   playerZones: [42, 43, 57, 58],
   finalZones: [23, 38, 53, 68, 83],
 };
 
 const blueZone = {
-  startingPoint: 1,
+  startingPoint: 202,
   border: [
     136, 137, 138, 139, 140, 141, 151, 156, 166, 171, 181, 186, 196, 201, 211,
-    212, 213, 214, 215, 216,
+    212, 213, 214, 215, 216, 202,
   ],
   playerZones: [168, 169, 183, 184],
   finalZones: [143, 158, 173, 188, 203],
 };
 
 const yellowZone = {
-  startingPoint: 1,
+  startingPoint: 134,
   border: [
     145, 146, 147, 148, 149, 150, 160, 165, 175, 180, 190, 195, 205, 210, 220,
-    221, 222, 223, 224, 225,
+    221, 222, 223, 224, 225, 134,
   ],
   playerZones: [177, 178, 192, 193],
   finalZones: [115, 116, 117, 118, 119],
