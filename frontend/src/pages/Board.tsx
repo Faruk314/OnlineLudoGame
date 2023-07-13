@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   redZone,
   greenZone,
@@ -7,15 +7,11 @@ import {
   blueZone,
   path,
 } from "../constants/constants";
-import { Player } from "./SinglePlayer";
+import { GameContext } from "../context/GameContext";
 
-interface Props {
-  currentPlayerTurn: string;
-  players: Player[];
-}
-
-const Board = ({ currentPlayerTurn, players }: Props) => {
+const Board = () => {
   const [cells, setCells] = useState<number[]>([]);
+  const { players, highlightedPawns } = useContext(GameContext);
 
   useEffect(() => {
     const createGrid = () => {
@@ -50,6 +46,10 @@ const Board = ({ currentPlayerTurn, players }: Props) => {
               player.pawnThreePosition === cell + 1 ||
               player.pawnFourPosition === cell + 1
           )?.color;
+
+          const isHighlited = highlightedPawns.some(
+            (pawn) => pawn === cell + 1
+          );
 
           return (
             <div
@@ -94,6 +94,7 @@ const Board = ({ currentPlayerTurn, players }: Props) => {
                       "bg-blue-400": pawnColor === "blue",
                       "bg-green-400": pawnColor === "green",
                       "bg-yellow-400": pawnColor === "yellow",
+                      "border-4 border-black": isHighlited,
                     }
                   )}
                 ></div>
