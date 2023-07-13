@@ -4,7 +4,6 @@ import {
   greenZone,
   yellowZone,
   blueZone,
-  path,
 } from "../constants/constants";
 
 export class Player {
@@ -26,22 +25,22 @@ export class Player {
           this.pawnFourPosition = redZone.playerZones[3];
           break;
         case "green":
-          this.pawnOnePosition = 42;
-          this.pawnTwoPosition = 43;
-          this.pawnThreePosition = 57;
-          this.pawnFourPosition = 58;
+          this.pawnOnePosition = greenZone.playerZones[0];
+          this.pawnTwoPosition = greenZone.playerZones[1];
+          this.pawnThreePosition = greenZone.playerZones[2];
+          this.pawnFourPosition = greenZone.playerZones[3];
           break;
         case "blue":
-          this.pawnOnePosition = 168;
-          this.pawnTwoPosition = 169;
-          this.pawnThreePosition = 183;
-          this.pawnFourPosition = 184;
+          this.pawnOnePosition = blueZone.playerZones[0];
+          this.pawnTwoPosition = blueZone.playerZones[1];
+          this.pawnThreePosition = blueZone.playerZones[2];
+          this.pawnFourPosition = blueZone.playerZones[3];
           break;
         default:
-          this.pawnOnePosition = 177;
-          this.pawnTwoPosition = 178;
-          this.pawnThreePosition = 192;
-          this.pawnFourPosition = 193;
+          this.pawnOnePosition = yellowZone.playerZones[0];
+          this.pawnTwoPosition = yellowZone.playerZones[1];
+          this.pawnThreePosition = yellowZone.playerZones[2];
+          this.pawnFourPosition = yellowZone.playerZones[3];
           break;
       }
     }

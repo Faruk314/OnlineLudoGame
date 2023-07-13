@@ -11,7 +11,8 @@ import { GameContext } from "../context/GameContext";
 
 const Board = () => {
   const [cells, setCells] = useState<number[]>([]);
-  const { players, highlightedPawns } = useContext(GameContext);
+  const { players, highlightedPawns, handlePlayerMove } =
+    useContext(GameContext);
 
   useEffect(() => {
     const createGrid = () => {
@@ -87,6 +88,7 @@ const Board = () => {
             >
               {hasPawnOnCell && (
                 <div
+                  onClick={() => isHighlited && handlePlayerMove(cell + 1)}
                   className={classNames(
                     "absolute h-[2rem] w-[2rem] border border-black rounded-full",
                     {
@@ -94,7 +96,7 @@ const Board = () => {
                       "bg-blue-400": pawnColor === "blue",
                       "bg-green-400": pawnColor === "green",
                       "bg-yellow-400": pawnColor === "yellow",
-                      "border-4 border-black": isHighlited,
+                      "border-4 border-black cursor-pointer": isHighlited,
                     }
                   )}
                 ></div>

@@ -5,7 +5,9 @@ import {
   blueZone,
   yellowZone,
   greenZone,
+  path,
 } from "../constants/constants";
+import { Zone } from "../types/types";
 
 interface GameContextProps {
   randomNum: null | number;
@@ -15,9 +17,10 @@ interface GameContextProps {
   initGame: () => void;
   higlightStartingPawns: (
     currentPlayerIndex: number,
-    playerZones: number[]
+    pawnZone: Zone
   ) => number[];
   handleDiceThrow: () => void;
+  handlePlayerMove: (pawnIndex: number) => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -26,8 +29,9 @@ export const GameContext = createContext<GameContextProps>({
   currentPlayerTurn: "",
   highlightedPawns: [],
   initGame: () => {},
-  higlightStartingPawns: () => [],
+  higlightStartingPawns: (currentPlayerIndex, pawnZone) => [],
   handleDiceThrow: () => {},
+  handlePlayerMove: (pawnIndex) => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -35,6 +39,7 @@ export const GameContextProvider = ({ children }: any) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerTurn, setCurrentPlayerTurn] = useState("");
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
+  const [currentPlayerZone, setCurrentPlayerZone] = useState<Zone | null>(null);
 
   const initGame = useCallback(() => {
     const player = new Player({ color: "red" });
@@ -46,17 +51,17 @@ export const GameContextProvider = ({ children }: any) => {
 
   const higlightStartingPawns = (
     currentPlayerIndex: number,
-    playerZones: number[]
+    pawnZone: Zone
   ) => {
     const pawnOnePosition = players[currentPlayerIndex].pawnOnePosition;
     const pawnTwoPosition = players[currentPlayerIndex].pawnTwoPosition;
     const pawnThreePosition = players[currentPlayerIndex].pawnThreePosition;
     const pawnFourPosition = players[currentPlayerIndex].pawnFourPosition;
 
-    const pawnOneStartingPosition = playerZones[0];
-    const pawnTwoStartingPosition = playerZones[1];
-    const pawnThreeStartingPosition = playerZones[2];
-    const pawnFourStartingPosition = playerZones[3];
+    const pawnOneStartingPosition = pawnZone.playerZones[0];
+    const pawnTwoStartingPosition = pawnZone.playerZones[1];
+    const pawnThreeStartingPosition = pawnZone.playerZones[2];
+    const pawnFourStartingPosition = pawnZone.playerZones[3];
 
     const highlighted: number[] = [];
 
@@ -81,30 +86,30 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
-    let currentPlayerZone: number[] = [];
+    let currentPlayerZone: Zone | null = null;
     let currentPlayerIndex = players.findIndex(
       (player) => player.color === currentPlayerTurn
     );
 
     if (currentPlayerTurn === "red") {
-      currentPlayerZone = redZone.playerZones;
+      currentPlayerZone = redZone;
     }
     if (currentPlayerTurn === "blue") {
-      currentPlayerZone = blueZone.playerZones;
+      currentPlayerZone = blueZone;
     }
 
     if (currentPlayerTurn === "green") {
-      currentPlayerZone = greenZone.playerZones;
+      currentPlayerZone = greenZone;
     }
 
     if (currentPlayerTurn === "yellow") {
-      currentPlayerZone = yellowZone.playerZones;
+      currentPlayerZone = yellowZone;
     }
 
     if (randomNum === 6) {
       const highlighted = higlightStartingPawns(
         currentPlayerIndex,
-        currentPlayerZone
+        currentPlayerZone!
       );
 
       setHighlightedPawns((prev) => [...prev, ...highlighted]);
@@ -117,7 +122,27 @@ export const GameContextProvider = ({ children }: any) => {
 
     // players[currentPlayerIndex] =
 
+    setCurrentPlayerZone(currentPlayerZone);
     setRandomNum(randomNum);
+  };
+
+  const handlePlayerMove = (pawnIndex: number) => {
+    const updatedPlayers = [...players];
+    const playerOnMoveIndex = updatedPlayers.findIndex(
+      (player) => player.color === currentPlayerTurn
+    );
+    const playerOnMove = players[playerOnMoveIndex];
+    const currentPawnPosition = Object.keys(playerOnMove).find(
+      (key) => playerOnMove[key as keyof Player] === pawnIndex
+    );
+
+    if (currentPlayerZone?.playerZones.includes(pawnIndex)) {
+      updatedPlayers[playerOnMoveIndex][currentPawnPosition] =
+        currentPlayerZone.startingPoint;
+    }
+
+    setHighlightedPawns([]);
+    setPlayers(updatedPlayers);
   };
 
   const contextValue: GameContextProps = {
@@ -128,6 +153,7 @@ export const GameContextProvider = ({ children }: any) => {
     initGame,
     higlightStartingPawns,
     handleDiceThrow,
+    handlePlayerMove,
   };
 
   return (
