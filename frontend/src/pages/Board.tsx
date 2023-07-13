@@ -17,8 +17,6 @@ interface Props {
 const Board = ({ currentPlayerTurn, players }: Props) => {
   const [cells, setCells] = useState<number[]>([]);
 
-  console.log(cells);
-
   useEffect(() => {
     const createGrid = () => {
       let cells: number[] = [];
@@ -90,7 +88,7 @@ const Board = ({ currentPlayerTurn, players }: Props) => {
               {hasPawnOnCell && (
                 <div
                   className={classNames(
-                    "absolute h-[2rem] w-[2rem] border-4 border-black rounded-full",
+                    "absolute h-[2rem] w-[2rem] border border-black rounded-full",
                     {
                       "bg-red-400": pawnColor === "red",
                       "bg-blue-400": pawnColor === "blue",
@@ -100,6 +98,7 @@ const Board = ({ currentPlayerTurn, players }: Props) => {
                   )}
                 ></div>
               )}
+              {cell + 1}
             </div>
           );
         })}
