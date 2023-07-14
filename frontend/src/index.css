@@ -4,9 +4,35 @@
 
 .board {
   display: grid;
-  grid-template-columns: repeat(
-    15,
-    50px
-  ); /* Change the number of columns as needed */
-  /* Adjust the gap between grid items */
+  grid-template-columns: repeat(15, 50px);
+  height: 650px;
+}
+
+.pawnSize {
+  height: 2rem;
+  width: 2rem;
+}
+
+@media (max-width: 1000px) {
+  .board {
+    grid-template-columns: repeat(15, 35px);
+    height: 500px;
+  }
+
+  .pawnSize {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
+@media (max-width: 750px) {
+  .board {
+    grid-template-columns: repeat(15, 20px);
+    height: 400px;
+  }
+
+  .pawnSize {
+    height: 1rem;
+    width: 1rem;
+  }
 }

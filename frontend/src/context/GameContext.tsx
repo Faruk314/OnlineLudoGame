@@ -81,9 +81,6 @@ export const GameContextProvider = ({ children }: any) => {
           (position, index) => index === nextPossiblePositionIndex
         );
 
-        console.log(nextPossiblePositionIndex, "higlight");
-        console.log(nextPossiblePosition, "higlight");
-
         if (nextPossiblePosition === undefined) return;
 
         highlighted.push(position);
@@ -122,6 +119,8 @@ export const GameContextProvider = ({ children }: any) => {
     setRandomNum(randomNum);
   };
 
+  const eatPawn = (position: number) => {};
+
   const handlePlayerMove = (pawnIndex: number) => {
     const updatedPlayers = [...players];
     const playerOnMove = players[currentPlayerTurnIndex!];
@@ -145,31 +144,29 @@ export const GameContextProvider = ({ children }: any) => {
       return;
     }
 
-    console.log("randomnum and position index", randomNum, positionIndex);
-
     //if the move is made from path move player to next posibble position
     let pathPositionIndex = currentPlayerZone?.path.findIndex(
       (pathPosition) => pathPosition === pawnIndex
     );
 
-    console.log(pathPositionIndex, "pathpositionIndex");
-
     if (pathPositionIndex === undefined) return;
 
     let nextPossiblePositionIndex = randomNum! + pathPositionIndex;
-
-    console.log("nextPossiblePositionIndex - move", nextPossiblePositionIndex);
 
     let nextPosiblePosition = currentPlayerZone?.path.find(
       (position, index) => index === nextPossiblePositionIndex
     );
 
-    console.log(nextPosiblePosition, "move");
-
     if (nextPosiblePosition) {
       updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
         nextPosiblePosition;
 
+      //check if there is an opponent pawn on that position
+      if (
+        players[opponentIndex].pawnPositions.indexOf(nextPosiblePosition) !== -1
+      ) {
+        eatPawn(nextPosiblePosition);
+      }
       // return changeTurns(opponentIndex, updatedPlayers);
       setHighlightedPawns([]);
       setPlayers(updatedPlayers);

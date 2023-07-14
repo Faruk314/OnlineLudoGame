@@ -30,7 +30,7 @@ const Board = () => {
 
   return (
     <div className="grid justify-center h-[100vh] items-center">
-      <div className="board h-[650px]">
+      <div className="board">
         {cells.map((cell, index) => {
           const hasPawnOnCell = players.some((player) =>
             player.pawnPositions.includes(cell + 1)
@@ -80,7 +80,7 @@ const Board = () => {
                 <div
                   onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
                   className={classNames(
-                    "absolute h-[2rem] w-[2rem] border border-black rounded-full",
+                    "absolute pawnSize border border-black rounded-full",
                     {
                       "bg-red-400": pawnColor === "red",
                       "bg-blue-400": pawnColor === "blue",

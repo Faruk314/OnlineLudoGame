@@ -16,7 +16,7 @@ export class Player {
 
       switch (color) {
         case "red":
-          this.pawnPositions = [...redZone.playerZones];
+          this.pawnPositions = [92, ...redZone.playerZones];
 
           break;
         case "green":
@@ -24,7 +24,7 @@ export class Player {
 
           break;
         case "blue":
-          this.pawnPositions = [...blueZone.playerZones];
+          this.pawnPositions = [93, 94, 95, 96];
 
           break;
         default:
