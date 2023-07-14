@@ -1,12 +1,5 @@
 import React, { createContext, useState, useCallback } from "react";
 import { Player } from "../classess/Player";
-import {
-  redZone,
-  blueZone,
-  yellowZone,
-  greenZone,
-  path,
-} from "../constants/constants";
 import { Zone } from "../types/types";
 
 interface GameContextProps {
@@ -15,7 +8,7 @@ interface GameContextProps {
   currentPlayerTurnIndex: null | number;
   highlightedPawns: number[];
   initGame: () => void;
-  higlightPawns: (randomNum: number, pawnZone: Zone) => number[];
+  higlightPawns: (randomNum: number) => number[];
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
 }
@@ -26,7 +19,7 @@ export const GameContext = createContext<GameContextProps>({
   currentPlayerTurnIndex: null,
   highlightedPawns: [],
   initGame: () => {},
-  higlightPawns: (randomNum, pawnZone) => [],
+  higlightPawns: (randomNum) => [],
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
 });
@@ -35,7 +28,6 @@ export const GameContextProvider = ({ children }: any) => {
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
-  const [currentPlayerZone, setCurrentPlayerZone] = useState<Zone | null>(null);
   const [currentPlayerTurnIndex, setCurrentPlayerTurnIndex] = useState<
     number | null
   >(null);
@@ -55,21 +47,21 @@ export const GameContextProvider = ({ children }: any) => {
   //   218, 217,
   // ];
 
-  const higlightPawns = (randomNum: number, pawnZone: Zone) => {
+  const higlightPawns = (randomNum: number) => {
     const playerOnMove = players[currentPlayerTurnIndex!];
     const highlighted: number[] = [];
 
     playerOnMove.pawnPositions.forEach((position) => {
       //find pawns that are in a starting positions(playerZones)
       if (
-        currentPlayerZone?.playerZones.includes(position) &&
+        playerOnMove?.startingPositions.includes(position) &&
         randomNum === 6
       ) {
         highlighted.push(position);
       }
 
       //find pawns that are in path
-      let positionIndex = pawnZone.path.findIndex(
+      let positionIndex = playerOnMove.path.findIndex(
         (pathPosition) => pathPosition === position
       );
 
@@ -77,7 +69,7 @@ export const GameContextProvider = ({ children }: any) => {
       if (positionIndex !== -1) {
         let nextPossiblePositionIndex = positionIndex + randomNum;
 
-        let nextPossiblePosition = pawnZone.path.find(
+        let nextPossiblePosition = playerOnMove.path.find(
           (position, index) => index === nextPossiblePositionIndex
         );
 
@@ -92,30 +84,11 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
-    let currentPlayerZone: Zone | null = null;
-    let currentPlayer = players[currentPlayerTurnIndex!];
 
-    if (currentPlayer.color === "red") {
-      currentPlayerZone = redZone;
-    }
-    if (currentPlayer.color === "blue") {
-      currentPlayerZone = blueZone;
-    }
-
-    if (currentPlayer.color === "green") {
-      currentPlayerZone = greenZone;
-    }
-
-    if (currentPlayer.color === "yellow") {
-      currentPlayerZone = yellowZone;
-    }
-
-    const highlighted = higlightPawns(randomNum, currentPlayerZone!);
+    const highlighted = higlightPawns(randomNum);
 
     setHighlightedPawns(highlighted);
-    console.log(highlighted);
 
-    setCurrentPlayerZone(currentPlayerZone);
     setRandomNum(randomNum);
   };
 
@@ -134,9 +107,9 @@ export const GameContextProvider = ({ children }: any) => {
     );
 
     //check if the move is made from startingPoints and add pawn to starting position
-    if (currentPlayerZone?.playerZones.includes(pawnIndex)) {
+    if (playerOnMove?.startingPositions.includes(pawnIndex)) {
       updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
-        currentPlayerZone.startingPoint;
+        playerOnMove.startingPoint!;
 
       // return changeTurns(opponentIndex, updatedPlayers);
       setHighlightedPawns([]);
@@ -145,7 +118,7 @@ export const GameContextProvider = ({ children }: any) => {
     }
 
     //if the move is made from path move player to next posibble position
-    let pathPositionIndex = currentPlayerZone?.path.findIndex(
+    let pathPositionIndex = playerOnMove?.path.findIndex(
       (pathPosition) => pathPosition === pawnIndex
     );
 
@@ -153,7 +126,7 @@ export const GameContextProvider = ({ children }: any) => {
 
     let nextPossiblePositionIndex = randomNum! + pathPositionIndex;
 
-    let nextPosiblePosition = currentPlayerZone?.path.find(
+    let nextPosiblePosition = playerOnMove?.path.find(
       (position, index) => index === nextPossiblePositionIndex
     );
 
