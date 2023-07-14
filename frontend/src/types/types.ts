@@ -7,4 +7,6 @@ export interface Zone {
   border: number[];
   playerZones: number[];
   finalZones: number[];
+  endpoint: number;
+  path: number[];
 }

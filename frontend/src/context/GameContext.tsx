@@ -48,12 +48,44 @@ export const GameContextProvider = ({ children }: any) => {
     setPlayers([player, computer]);
   }, []);
 
+  // const path = [
+  //   202, 187, 172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94,
+  //   95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103,
+  //   104, 105, 120, 135, 134, 133, 132, 131, 130, 144, 159, 174, 189, 204, 219,
+  //   218, 217,
+  // ];
+
   const higlightPawns = (randomNum: number, pawnZone: Zone) => {
     const playerOnMove = players[currentPlayerTurnIndex!];
     const highlighted: number[] = [];
 
     playerOnMove.pawnPositions.forEach((position) => {
-      if (currentPlayerZone?.playerZones.includes(position)) {
+      //find pawns that are in a starting positions(playerZones)
+      if (
+        currentPlayerZone?.playerZones.includes(position) &&
+        randomNum === 6
+      ) {
+        highlighted.push(position);
+      }
+
+      //find pawns that are in path
+      let positionIndex = pawnZone.path.findIndex(
+        (pathPosition) => pathPosition === position
+      );
+
+      //check if the move is posible
+      if (positionIndex !== -1) {
+        let nextPossiblePositionIndex = positionIndex + randomNum;
+
+        let nextPossiblePosition = pawnZone.path.find(
+          (position, index) => index === nextPossiblePositionIndex
+        );
+
+        console.log(nextPossiblePositionIndex, "higlight");
+        console.log(nextPossiblePosition, "higlight");
+
+        if (nextPossiblePosition === undefined) return;
+
         highlighted.push(position);
       }
     });
@@ -83,7 +115,7 @@ export const GameContextProvider = ({ children }: any) => {
 
     const highlighted = higlightPawns(randomNum, currentPlayerZone!);
 
-    setHighlightedPawns((prev) => [...prev, ...highlighted]);
+    setHighlightedPawns(highlighted);
     console.log(highlighted);
 
     setCurrentPlayerZone(currentPlayerZone);
@@ -92,27 +124,59 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handlePlayerMove = (pawnIndex: number) => {
     const updatedPlayers = [...players];
-
     const playerOnMove = players[currentPlayerTurnIndex!];
+    const opponentIndex = players.findIndex(
+      (player) => player.color !== playerOnMove.color
+    );
 
     //find that position in positions array and change it
     const positionIndex = playerOnMove.pawnPositions.findIndex(
       (position) => position === pawnIndex
     );
 
+    //check if the move is made from startingPoints and add pawn to starting position
     if (currentPlayerZone?.playerZones.includes(pawnIndex)) {
       updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
         currentPlayerZone.startingPoint;
+
+      // return changeTurns(opponentIndex, updatedPlayers);
+      setHighlightedPawns([]);
+      setPlayers(updatedPlayers);
+      return;
+    }
+
+    console.log("randomnum and position index", randomNum, positionIndex);
+
+    //if the move is made from path move player to next posibble position
+    let pathPositionIndex = currentPlayerZone?.path.findIndex(
+      (pathPosition) => pathPosition === pawnIndex
+    );
+
+    console.log(pathPositionIndex, "pathpositionIndex");
+
+    if (pathPositionIndex === undefined) return;
+
+    let nextPossiblePositionIndex = randomNum! + pathPositionIndex;
+
+    console.log("nextPossiblePositionIndex - move", nextPossiblePositionIndex);
+
+    let nextPosiblePosition = currentPlayerZone?.path.find(
+      (position, index) => index === nextPossiblePositionIndex
+    );
+
+    console.log(nextPosiblePosition, "move");
+
+    if (nextPosiblePosition) {
+      updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
+        nextPosiblePosition;
+
+      // return changeTurns(opponentIndex, updatedPlayers);
+      setHighlightedPawns([]);
+      setPlayers(updatedPlayers);
+      return;
     }
 
     //change turns
-    const opponentIndex = players.findIndex(
-      (player) => player.color !== playerOnMove.color
-    );
-
-    setCurrentPlayerTurnIndex(opponentIndex);
-    setHighlightedPawns([]);
-    setPlayers(updatedPlayers);
   };
 
   const contextValue: GameContextProps = {
