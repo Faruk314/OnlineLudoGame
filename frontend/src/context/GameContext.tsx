@@ -25,6 +25,9 @@ export const GameContext = createContext<GameContextProps>({
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [chosenColors, setChosenColors] = useState(["red", "blue", "green"]);
+  const [playerTurns, setPlayerTurns] = useState<number[]>([]);
+  const [chosenPlayers, setChosenPlayers] = useState(3);
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
@@ -32,20 +35,53 @@ export const GameContextProvider = ({ children }: any) => {
     number | null
   >(null);
 
+  console.log(players);
+
   const initGame = useCallback(() => {
-    const player = new Player({ color: "red" });
-    const computer = new Player({ color: "blue" });
+    let turns: number[] = [];
+    let currentPlayerIndex: number | null = null;
+    let colors = ["red", "blue", "yellow", "green"];
+    let playerOne: Player | null = null;
+    let playerTwo: Player | null = null;
+    let playerThree: Player | null = null;
+    let playerFour: Player | null = null;
 
-    setCurrentPlayerTurnIndex(0);
-    setPlayers([player, computer]);
-  }, []);
+    //this is determining the turns and colors
+    if (chosenPlayers === 4) {
+      turns = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      colors = colors.sort(() => Math.random() - 0.5);
+      currentPlayerIndex = turns[0];
 
-  // const path = [
-  //   202, 187, 172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94,
-  //   95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103,
-  //   104, 105, 120, 135, 134, 133, 132, 131, 130, 144, 159, 174, 189, 204, 219,
-  //   218, 217,
-  // ];
+      playerOne = new Player({ color: colors[0] });
+      playerTwo = new Player({ color: colors[1] });
+      playerThree = new Player({ color: colors[2] });
+      playerFour = new Player({ color: colors[3] });
+
+      setPlayers([playerOne, playerTwo, playerThree, playerFour]);
+    } else if (chosenPlayers === 3) {
+      turns = [0, 1, 2].sort(() => Math.random() - 0.5);
+      currentPlayerIndex = turns[0];
+
+      playerOne = new Player({ color: chosenColors[0] });
+      playerTwo = new Player({ color: chosenColors[1] });
+      playerThree = new Player({ color: chosenColors[2] });
+
+      setPlayers([playerOne, playerTwo, playerThree]);
+    } else if (chosenPlayers === 2) {
+      turns = [0, 1].sort(() => Math.random() - 0.5);
+      currentPlayerIndex = turns[0];
+
+      playerOne = new Player({ color: chosenColors[0] });
+      playerTwo = new Player({ color: chosenColors[1] });
+
+      setPlayers([playerOne, playerTwo]);
+    }
+
+    console.log(turns);
+
+    setPlayerTurns(turns);
+    setCurrentPlayerTurnIndex(currentPlayerIndex);
+  }, [chosenPlayers]);
 
   const higlightPawns = (randomNum: number) => {
     const playerOnMove = players[currentPlayerTurnIndex!];
@@ -84,7 +120,6 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
-
     const highlighted = higlightPawns(randomNum);
 
     setHighlightedPawns(highlighted);
