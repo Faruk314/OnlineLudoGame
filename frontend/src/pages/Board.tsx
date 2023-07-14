@@ -32,25 +32,15 @@ const Board = () => {
     <div className="grid justify-center h-[100vh] items-center">
       <div className="board h-[650px]">
         {cells.map((cell, index) => {
-          const hasPawnOnCell = players.some(
-            (player) =>
-              player.pawnOnePosition === cell + 1 ||
-              player.pawnTwoPosition === cell + 1 ||
-              player.pawnThreePosition === cell + 1 ||
-              player.pawnFourPosition === cell + 1
+          const hasPawnOnCell = players.some((player) =>
+            player.pawnPositions.includes(cell + 1)
           );
 
-          const pawnColor = players.find(
-            (player) =>
-              player.pawnOnePosition === cell + 1 ||
-              player.pawnTwoPosition === cell + 1 ||
-              player.pawnThreePosition === cell + 1 ||
-              player.pawnFourPosition === cell + 1
+          const pawnColor = players.find((player) =>
+            player.pawnPositions.includes(cell + 1)
           )?.color;
 
-          const isHighlited = highlightedPawns.some(
-            (pawn) => pawn === cell + 1
-          );
+          const isHighlighted = highlightedPawns.includes(cell + 1);
 
           return (
             <div
@@ -88,7 +78,7 @@ const Board = () => {
             >
               {hasPawnOnCell && (
                 <div
-                  onClick={() => isHighlited && handlePlayerMove(cell + 1)}
+                  onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
                   className={classNames(
                     "absolute h-[2rem] w-[2rem] border border-black rounded-full",
                     {
@@ -96,7 +86,7 @@ const Board = () => {
                       "bg-blue-400": pawnColor === "blue",
                       "bg-green-400": pawnColor === "green",
                       "bg-yellow-400": pawnColor === "yellow",
-                      "border-4 border-black cursor-pointer": isHighlited,
+                      "border-4 border-black cursor-pointer": isHighlighted,
                     }
                   )}
                 ></div>
