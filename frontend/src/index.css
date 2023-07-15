@@ -4,13 +4,13 @@
 
 .board {
   display: grid;
-  grid-template-columns: repeat(15, 50px);
-  height: 650px;
+  grid-template-columns: repeat(15, 40px);
+  height: 550px;
 }
 
 .pawnSize {
-  height: 2rem;
-  width: 2rem;
+  height: 1.7rem;
+  width: 1.7rem;
 }
 
 @media (max-width: 1000px) {

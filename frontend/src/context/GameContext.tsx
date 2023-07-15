@@ -11,6 +11,7 @@ interface GameContextProps {
   higlightPawns: (randomNum: number) => number[];
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
+  playerTurns: number[];
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -22,12 +23,13 @@ export const GameContext = createContext<GameContextProps>({
   higlightPawns: (randomNum) => [],
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
+  playerTurns: [],
 });
 
 export const GameContextProvider = ({ children }: any) => {
-  const [chosenColors, setChosenColors] = useState(["red", "blue"]);
+  const [chosenColors, setChosenColors] = useState([]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
-  const [chosenPlayers, setChosenPlayers] = useState(2);
+  const [chosenPlayers, setChosenPlayers] = useState(4);
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
@@ -241,6 +243,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const contextValue: GameContextProps = {
     randomNum,
+    playerTurns,
     players,
     currentPlayerTurnIndex,
     highlightedPawns,
