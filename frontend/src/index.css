@@ -27,7 +27,7 @@
 
 @media (max-width: 750px) {
   .board {
-    grid-template-columns: repeat(15, 20px);
+    grid-template-columns: repeat(15, 22px);
     height: 400px;
   }
 

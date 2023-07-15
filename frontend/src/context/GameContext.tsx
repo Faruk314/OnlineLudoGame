@@ -35,7 +35,8 @@ export const GameContextProvider = ({ children }: any) => {
     number | null
   >(null);
 
-  console.log(playerTurns);
+  console.log(playerTurns, "playerTurns");
+  console.log(currentPlayerTurnIndex, "playerTurn");
 
   const initGame = useCallback(() => {
     let turns: number[] = [];
@@ -137,6 +138,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const checkOpponentsPositions = (position: number) => {
     let updatedPlayers = [...players];
+    let pawnEaten = false;
 
     updatedPlayers.forEach((player, index) => {
       //this filters current player and just leaves opponents
@@ -149,9 +151,22 @@ export const GameContextProvider = ({ children }: any) => {
         //if the position is found then the pawn is eaten and this find the free space at starting point
         if (opponentPawnIndex > -1) {
           player.pawnPositions[opponentPawnIndex] = findStartingPoint(player);
+          pawnEaten = true;
         }
       }
     });
+
+    return pawnEaten;
+  };
+
+  const switchTurns = () => {
+    let nextPlayerTurn = currentPlayerTurnIndex! + 1;
+
+    if (nextPlayerTurn > playerTurns.length - 1) {
+      nextPlayerTurn = 0;
+    }
+
+    setCurrentPlayerTurnIndex(nextPlayerTurn);
   };
 
   const handlePlayerMove = (pawnIndex: number) => {
@@ -168,7 +183,6 @@ export const GameContextProvider = ({ children }: any) => {
       updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
         playerOnMove.startingPoint!;
 
-      // return changeTurns(opponentIndex, updatedPlayers);
       setHighlightedPawns([]);
       setPlayers(updatedPlayers);
       return;
@@ -192,17 +206,16 @@ export const GameContextProvider = ({ children }: any) => {
         nextPosiblePosition;
 
       //check if there is an opponent pawn on that position
+      let pawnEaten = checkOpponentsPositions(nextPosiblePosition);
 
-      // players[opponentIndex].pawnPositions.indexOf(nextPosiblePosition) !== -1
-      checkOpponentsPositions(nextPosiblePosition);
+      if (pawnEaten === false && randomNum !== 6) {
+        switchTurns();
+      }
 
-      // return changeTurns(opponentIndex, updatedPlayers);
       setHighlightedPawns([]);
       setPlayers(updatedPlayers);
       return;
     }
-
-    //change turns
   };
 
   const contextValue: GameContextProps = {

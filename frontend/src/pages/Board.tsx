@@ -91,7 +91,7 @@ const Board = () => {
                   )}
                 ></div>
               )}
-              {cell + 1}
+              {/* {cell + 1} */}
             </div>
           );
         })}
