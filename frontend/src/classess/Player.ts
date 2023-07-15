@@ -12,7 +12,7 @@ export class Player {
   path: number[] = [];
   startingPositions: number[] = [];
   startingPoint: number | null = null;
-  pawnsInFinalZone: number = 0;
+  pawnsInFinalZone: number = 3;
   endpoint: number | null = null;
 
   constructor({ color }: IPlayer) {
@@ -21,7 +21,7 @@ export class Player {
 
       switch (color) {
         case "red":
-          this.pawnPositions = [...redZone.playerZones];
+          this.pawnPositions = [111, 112, 112, 112];
           this.path = [...redZone.path];
           this.startingPositions = [...redZone.playerZones];
           this.startingPoint = redZone.startingPoint;

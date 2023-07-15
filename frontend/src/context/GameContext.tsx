@@ -12,6 +12,8 @@ interface GameContextProps {
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
   playerTurns: number[];
+  isGameOver: boolean;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -24,9 +26,12 @@ export const GameContext = createContext<GameContextProps>({
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
   playerTurns: [],
+  isGameOver: false,
+  setGameOver: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [isGameOver, setGameOver] = useState(false);
   const [chosenColors, setChosenColors] = useState([]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
   const [chosenPlayers, setChosenPlayers] = useState(4);
@@ -130,7 +135,8 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handleDiceThrow = () => {
-    const randomNum = Math.floor(Math.random() * 6 + 1);
+    // const randomNum = Math.floor(Math.random() * 6 + 1);
+    const randomNum = 1;
     const highlighted = higlightPawns(randomNum);
 
     if (highlighted.length > 0) {
@@ -221,7 +227,7 @@ export const GameContextProvider = ({ children }: any) => {
         if (updatedPlayers[currentPlayerTurnIndex!].pawnsInFinalZone === 4) {
           setPlayers(updatedPlayers);
 
-          return console.log("gameOver");
+          return setGameOver(true);
         }
       }
 
@@ -242,6 +248,8 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const contextValue: GameContextProps = {
+    setGameOver,
+    isGameOver,
     randomNum,
     playerTurns,
     players,

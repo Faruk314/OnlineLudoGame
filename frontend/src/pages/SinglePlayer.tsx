@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import React, { useContext, useEffect } from "react";
 import { GameContext } from "../context/GameContext";
+import GameOver from "../modals/GameOver";
 import Board from "./Board";
 
 const SinglePlayer = () => {
@@ -11,6 +12,7 @@ const SinglePlayer = () => {
     initGame,
     currentPlayerTurnIndex,
     playerTurns,
+    isGameOver,
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -51,6 +53,7 @@ const SinglePlayer = () => {
 
         <Board />
       </div>
+      {isGameOver && <GameOver />}
     </section>
   );
 };
