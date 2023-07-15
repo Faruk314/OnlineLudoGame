@@ -25,9 +25,9 @@ export const GameContext = createContext<GameContextProps>({
 });
 
 export const GameContextProvider = ({ children }: any) => {
-  const [chosenColors, setChosenColors] = useState(["red", "blue", "green"]);
+  const [chosenColors, setChosenColors] = useState(["red", "blue"]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
-  const [chosenPlayers, setChosenPlayers] = useState(3);
+  const [chosenPlayers, setChosenPlayers] = useState(2);
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
@@ -35,7 +35,7 @@ export const GameContextProvider = ({ children }: any) => {
     number | null
   >(null);
 
-  console.log(players);
+  console.log(playerTurns);
 
   const initGame = useCallback(() => {
     let turns: number[] = [];
@@ -76,8 +76,6 @@ export const GameContextProvider = ({ children }: any) => {
 
       setPlayers([playerOne, playerTwo]);
     }
-
-    console.log(turns);
 
     setPlayerTurns(turns);
     setCurrentPlayerTurnIndex(currentPlayerIndex);
@@ -127,14 +125,38 @@ export const GameContextProvider = ({ children }: any) => {
     setRandomNum(randomNum);
   };
 
-  const eatPawn = (position: number) => {};
+  const findStartingPoint = (player: Player) => {
+    //this will find first available starting position
+    let firstAvailablePosition = player.startingPositions.find(
+      (position) => !player.pawnPositions.includes(position)
+    );
+
+    //return first free position
+    return firstAvailablePosition!;
+  };
+
+  const checkOpponentsPositions = (position: number) => {
+    let updatedPlayers = [...players];
+
+    updatedPlayers.forEach((player, index) => {
+      //this filters current player and just leaves opponents
+      if (index !== currentPlayerTurnIndex) {
+        //this finds opponent pawn at position currentPlayer just stepped
+        const opponentPawnIndex = player.pawnPositions.indexOf(position);
+
+        console.log(opponentPawnIndex, "opponentPawnIndexes ");
+
+        //if the position is found then the pawn is eaten and this find the free space at starting point
+        if (opponentPawnIndex > -1) {
+          player.pawnPositions[opponentPawnIndex] = findStartingPoint(player);
+        }
+      }
+    });
+  };
 
   const handlePlayerMove = (pawnIndex: number) => {
     const updatedPlayers = [...players];
     const playerOnMove = players[currentPlayerTurnIndex!];
-    const opponentIndex = players.findIndex(
-      (player) => player.color !== playerOnMove.color
-    );
 
     //find that position in positions array and change it
     const positionIndex = playerOnMove.pawnPositions.findIndex(
@@ -170,11 +192,10 @@ export const GameContextProvider = ({ children }: any) => {
         nextPosiblePosition;
 
       //check if there is an opponent pawn on that position
-      if (
-        players[opponentIndex].pawnPositions.indexOf(nextPosiblePosition) !== -1
-      ) {
-        eatPawn(nextPosiblePosition);
-      }
+
+      // players[opponentIndex].pawnPositions.indexOf(nextPosiblePosition) !== -1
+      checkOpponentsPositions(nextPosiblePosition);
+
       // return changeTurns(opponentIndex, updatedPlayers);
       setHighlightedPawns([]);
       setPlayers(updatedPlayers);
