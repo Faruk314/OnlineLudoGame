@@ -117,11 +117,25 @@ export const GameContextProvider = ({ children }: any) => {
     return highlighted;
   };
 
+  const switchTurns = () => {
+    let nextPlayerTurn = currentPlayerTurnIndex! + 1;
+
+    if (nextPlayerTurn > playerTurns.length - 1) {
+      nextPlayerTurn = 0;
+    }
+
+    setCurrentPlayerTurnIndex(nextPlayerTurn);
+  };
+
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
     const highlighted = higlightPawns(randomNum);
 
-    setHighlightedPawns(highlighted);
+    if (highlighted.length > 0) {
+      setHighlightedPawns(highlighted);
+    } else {
+      switchTurns();
+    }
 
     setRandomNum(randomNum);
   };
@@ -146,8 +160,6 @@ export const GameContextProvider = ({ children }: any) => {
         //this finds opponent pawn at position currentPlayer just stepped
         const opponentPawnIndex = player.pawnPositions.indexOf(position);
 
-        console.log(opponentPawnIndex, "opponentPawnIndexes ");
-
         //if the position is found then the pawn is eaten and this find the free space at starting point
         if (opponentPawnIndex > -1) {
           player.pawnPositions[opponentPawnIndex] = findStartingPoint(player);
@@ -157,16 +169,6 @@ export const GameContextProvider = ({ children }: any) => {
     });
 
     return pawnEaten;
-  };
-
-  const switchTurns = () => {
-    let nextPlayerTurn = currentPlayerTurnIndex! + 1;
-
-    if (nextPlayerTurn > playerTurns.length - 1) {
-      nextPlayerTurn = 0;
-    }
-
-    setCurrentPlayerTurnIndex(nextPlayerTurn);
   };
 
   const handlePlayerMove = (pawnIndex: number) => {
@@ -205,16 +207,35 @@ export const GameContextProvider = ({ children }: any) => {
       updatedPlayers[currentPlayerTurnIndex!].pawnPositions[positionIndex] =
         nextPosiblePosition;
 
+      //check if the pawn is at last position
+      let isOnLastPosition = nextPosiblePosition === playerOnMove.endpoint;
+
+      console.log(isOnLastPosition, "isOnLastPosition");
+
+      //this function checks if the game is over
+      if (isOnLastPosition) {
+        updatedPlayers[currentPlayerTurnIndex!].pawnsInFinalZone += 1;
+
+        if (updatedPlayers[currentPlayerTurnIndex!].pawnsInFinalZone === 4) {
+          setPlayers(updatedPlayers);
+
+          return console.log("gameOver");
+        }
+      }
+
       //check if there is an opponent pawn on that position
       let pawnEaten = checkOpponentsPositions(nextPosiblePosition);
 
-      if (pawnEaten === false && randomNum !== 6) {
+      if (
+        pawnEaten === false &&
+        randomNum !== 6 &&
+        isOnLastPosition === false
+      ) {
         switchTurns();
       }
 
       setHighlightedPawns([]);
       setPlayers(updatedPlayers);
-      return;
     }
   };
 

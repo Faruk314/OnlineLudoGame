@@ -12,6 +12,8 @@ export class Player {
   path: number[] = [];
   startingPositions: number[] = [];
   startingPoint: number | null = null;
+  pawnsInFinalZone: number = 0;
+  endpoint: number | null = null;
 
   constructor({ color }: IPlayer) {
     if (!this.color) {
@@ -19,28 +21,32 @@ export class Player {
 
       switch (color) {
         case "red":
-          this.pawnPositions = [92, ...redZone.playerZones];
+          this.pawnPositions = [...redZone.finalZones.slice(0, 4)];
           this.path = [...redZone.path];
           this.startingPositions = [...redZone.playerZones];
           this.startingPoint = redZone.startingPoint;
+          this.endpoint = redZone.endpoint;
           break;
         case "green":
           this.pawnPositions = [...greenZone.playerZones];
           this.path = [...greenZone.path];
           this.startingPositions = [...greenZone.playerZones];
           this.startingPoint = greenZone.startingPoint;
+          this.endpoint = greenZone.endpoint;
           break;
         case "blue":
           this.pawnPositions = [93, 94, 95, 96];
           this.path = [...blueZone.path];
           this.startingPositions = [...blueZone.playerZones];
           this.startingPoint = blueZone.startingPoint;
+          this.endpoint = blueZone.endpoint;
           break;
         default:
           this.pawnPositions = [...yellowZone.playerZones];
           this.path = [...yellowZone.path];
           this.startingPositions = [...yellowZone.playerZones];
           this.startingPoint = yellowZone.startingPoint;
+          this.endpoint = yellowZone.endpoint;
           break;
       }
     }
