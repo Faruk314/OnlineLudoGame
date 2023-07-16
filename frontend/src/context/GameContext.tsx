@@ -14,6 +14,10 @@ interface GameContextProps {
   playerTurns: number[];
   isGameOver: boolean;
   setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+  setChosenColors: React.Dispatch<React.SetStateAction<string[]>>;
+  setChosenPlayers: React.Dispatch<React.SetStateAction<number>>;
+  chosenColors: string[];
+  chosenPlayers: number;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -28,22 +32,23 @@ export const GameContext = createContext<GameContextProps>({
   playerTurns: [],
   isGameOver: false,
   setGameOver: () => {},
+  setChosenColors: () => {},
+  setChosenPlayers: () => {},
+  chosenColors: [],
+  chosenPlayers: 0,
 });
 
 export const GameContextProvider = ({ children }: any) => {
   const [isGameOver, setGameOver] = useState(false);
-  const [chosenColors, setChosenColors] = useState([]);
+  const [chosenColors, setChosenColors] = useState<string[]>([]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
-  const [chosenPlayers, setChosenPlayers] = useState(4);
+  const [chosenPlayers, setChosenPlayers] = useState(0);
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
   const [currentPlayerTurnIndex, setCurrentPlayerTurnIndex] = useState<
     number | null
   >(null);
-
-  console.log(playerTurns, "playerTurns");
-  console.log(currentPlayerTurnIndex, "playerTurn");
 
   const initGame = useCallback(() => {
     let turns: number[] = [];
@@ -248,6 +253,10 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const contextValue: GameContextProps = {
+    setChosenPlayers,
+    setChosenColors,
+    chosenPlayers,
+    chosenColors,
     setGameOver,
     isGameOver,
     randomNum,

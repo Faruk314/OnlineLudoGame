@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 import ChoseColors from "./ChoseColors";
 
@@ -9,6 +10,7 @@ interface Props {
 const Local = ({ setOpenLocal }: Props) => {
   const { setChosenPlayers, chosenPlayers } = useContext(GameContext);
   const [showChoseColors, setShowChoseColors] = useState(false);
+  const navigate = useNavigate();
 
   console.log(chosenPlayers);
 
@@ -67,16 +69,22 @@ const Local = ({ setOpenLocal }: Props) => {
           <button
             disabled={chosenPlayers === 0 ? true : false}
             onClick={() => {
+              if (chosenPlayers === 4) {
+                return navigate("/local");
+              }
+
               setShowChoseColors(true);
             }}
             className="px-5 py-2 font-bold text-white bg-red-500 border border-black rounded-lg disabled:bg-gray-400 hover:bg-red-600 disabled:text-gray-200"
           >
-            Next
+            Continue
           </button>
         </div>
       )}
 
-      {showChoseColors && <ChoseColors />}
+      {showChoseColors && (
+        <ChoseColors setShowChoseColors={setShowChoseColors} />
+      )}
     </div>
   );
 };
