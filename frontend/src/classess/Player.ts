@@ -21,7 +21,7 @@ export class Player {
 
       switch (color) {
         case "red":
-          this.pawnPositions = [111, 112, 112, 112];
+          this.pawnPositions = [...redZone.playerZones];
           this.path = [...redZone.path];
           this.startingPositions = [...redZone.playerZones];
           this.startingPoint = redZone.startingPoint;

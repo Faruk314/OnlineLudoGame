@@ -1,6 +1,7 @@
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useState, useCallback, useContext } from "react";
 import { Player } from "../classess/Player";
-import { Zone } from "../types/types";
+import { SoundContext } from "./SoundContext";
+import { move, win } from "../constants/constants";
 
 interface GameContextProps {
   randomNum: null | number;
@@ -45,6 +46,7 @@ export const GameContextProvider = ({ children }: any) => {
   const [chosenPlayers, setChosenPlayers] = useState(0);
   const [randomNum, setRandomNum] = useState<null | number>(null);
   const [players, setPlayers] = useState<Player[]>([]);
+  const { playSound } = useContext(SoundContext);
   const [highlightedPawns, setHighlightedPawns] = useState<number[]>([]);
   const [currentPlayerTurnIndex, setCurrentPlayerTurnIndex] = useState<
     number | null
@@ -141,7 +143,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     // const randomNum = Math.floor(Math.random() * 6 + 1);
-    const randomNum = 1;
+    const randomNum = 6; // c
     const highlighted = higlightPawns(randomNum);
 
     if (highlighted.length > 0) {
@@ -187,6 +189,7 @@ export const GameContextProvider = ({ children }: any) => {
   const handlePlayerMove = (pawnIndex: number) => {
     const updatedPlayers = [...players];
     const playerOnMove = players[currentPlayerTurnIndex!];
+    playSound(move);
 
     //find that position in positions array and change it
     const positionIndex = playerOnMove.pawnPositions.findIndex(
@@ -231,6 +234,7 @@ export const GameContextProvider = ({ children }: any) => {
 
         if (updatedPlayers[currentPlayerTurnIndex!].pawnsInFinalZone === 4) {
           setPlayers(updatedPlayers);
+          playSound(win);
 
           return setGameOver(true);
         }

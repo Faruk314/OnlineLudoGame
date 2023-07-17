@@ -11,12 +11,12 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <GameContextProvider>
-      <SoundProvider>
+    <SoundProvider>
+      <GameContextProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </SoundProvider>
-    </GameContextProvider>
+      </GameContextProvider>
+    </SoundProvider>
   </React.StrictMode>
 );
