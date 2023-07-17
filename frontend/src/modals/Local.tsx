@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
+import { SoundContext } from "../context/SoundContext";
 import ChoseColors from "./ChoseColors";
 
 interface Props {
@@ -11,8 +12,16 @@ const Local = ({ setOpenLocal }: Props) => {
   const { setChosenPlayers, chosenPlayers } = useContext(GameContext);
   const [showChoseColors, setShowChoseColors] = useState(false);
   const navigate = useNavigate();
+  const { playSound } = useContext(SoundContext);
+  const onChangeSound = "/sounds/click.wav";
+  const clickSound = "/sounds/click2.mp3";
 
   console.log(chosenPlayers);
+
+  const changeHandler = (e: any) => {
+    playSound(onChangeSound);
+    setChosenPlayers(parseInt(e.target.value));
+  };
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-center text-center bg-[rgb(0,0,0,0.5)]">
@@ -31,7 +40,7 @@ const Local = ({ setOpenLocal }: Props) => {
           <div className="flex flex-col py-6 space-y-2">
             <div className="flex items-center space-x-2 text-2xl">
               <input
-                onChange={(e) => setChosenPlayers(parseInt(e.target.value))}
+                onChange={changeHandler}
                 className="w-4 h-4 border border-black rounded-full appearance-none cursor-pointer checked:bg-red-500"
                 type="radio"
                 id="2"
@@ -43,7 +52,7 @@ const Local = ({ setOpenLocal }: Props) => {
 
             <div className="flex items-center space-x-2 text-2xl">
               <input
-                onChange={(e) => setChosenPlayers(parseInt(e.target.value))}
+                onChange={changeHandler}
                 className="w-4 h-4 border border-black rounded-full appearance-none cursor-pointer checked:bg-red-500"
                 type="radio"
                 id="3"
@@ -55,7 +64,7 @@ const Local = ({ setOpenLocal }: Props) => {
 
             <div className="flex items-center space-x-2 text-2xl">
               <input
-                onChange={(e) => setChosenPlayers(parseInt(e.target.value))}
+                onChange={changeHandler}
                 className="w-4 h-4 border border-black rounded-full appearance-none cursor-pointer checked:bg-red-500"
                 type="radio"
                 id="4"
@@ -69,6 +78,8 @@ const Local = ({ setOpenLocal }: Props) => {
           <button
             disabled={chosenPlayers === 0 ? true : false}
             onClick={() => {
+              playSound(clickSound);
+
               if (chosenPlayers === 4) {
                 return navigate("/local");
               }
