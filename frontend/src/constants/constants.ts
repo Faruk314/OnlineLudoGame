@@ -1,3 +1,6 @@
+const onChangeSound = "/sounds/click.wav";
+const clickSound = "/sounds/click2.mp3";
+
 const path = [
   202, 187, 172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94,
   95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103,
@@ -73,4 +76,32 @@ const yellowZone = {
   ],
 };
 
-export { redZone, greenZone, blueZone, yellowZone, path };
+const pawns = [
+  {
+    color: "red",
+    url: "/images/redPawn.png",
+  },
+  {
+    color: "green",
+    url: "/images/greenPawn.png",
+  },
+  {
+    color: "blue",
+    url: "/images/bluePawn.png",
+  },
+  {
+    color: "yellow",
+    url: "/images/yellowPawn.png",
+  },
+];
+
+export {
+  redZone,
+  greenZone,
+  blueZone,
+  yellowZone,
+  path,
+  onChangeSound,
+  clickSound,
+  pawns,
+};

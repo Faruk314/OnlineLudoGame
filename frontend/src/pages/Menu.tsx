@@ -6,14 +6,12 @@ import { ImExit } from "react-icons/im";
 import { ImVolumeMute, ImVolumeMute2 } from "react-icons/im";
 import Local from "../modals/Local";
 import { SoundContext } from "../context/SoundContext";
+import { clickSound } from "../constants/constants";
 
 const Menu = () => {
-  const clickSound = "/sounds/click2.mp3";
   const [openLocal, setOpenLocal] = useState(false);
   const { isSoundEnabled, setIsSoundEnabled, playSound } =
     useContext(SoundContext);
-
-  console.log(isSoundEnabled);
 
   return (
     <section className="h-[100vh]">

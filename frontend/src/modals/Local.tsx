@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 import { SoundContext } from "../context/SoundContext";
 import ChoseColors from "./ChoseColors";
+import { onChangeSound, clickSound } from "../constants/constants";
 
 interface Props {
   setOpenLocal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,10 +14,6 @@ const Local = ({ setOpenLocal }: Props) => {
   const [showChoseColors, setShowChoseColors] = useState(false);
   const navigate = useNavigate();
   const { playSound } = useContext(SoundContext);
-  const onChangeSound = "/sounds/click.wav";
-  const clickSound = "/sounds/click2.mp3";
-
-  console.log(chosenPlayers);
 
   const changeHandler = (e: any) => {
     playSound(onChangeSound);

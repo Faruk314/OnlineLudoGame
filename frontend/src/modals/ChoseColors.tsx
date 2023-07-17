@@ -1,38 +1,23 @@
-import { isDisabled } from "@testing-library/user-event/dist/utils";
 import classNames from "classnames";
-import React, { ButtonHTMLAttributes, useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
+import { clickSound, onChangeSound, pawns } from "../constants/constants";
+import { SoundContext } from "../context/SoundContext";
 
 interface Props {
   setShowChoseColors: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChoseColors = ({ setShowChoseColors }: Props) => {
+  const navigate = useNavigate();
+  const { playSound } = useContext(SoundContext);
   const { chosenPlayers, setChosenPlayers, setChosenColors, chosenColors } =
     useContext(GameContext);
-  const navigate = useNavigate();
-
-  const pawns = [
-    {
-      color: "red",
-      url: "/images/redPawn.png",
-    },
-    {
-      color: "green",
-      url: "/images/greenPawn.png",
-    },
-    {
-      color: "blue",
-      url: "/images/bluePawn.png",
-    },
-    {
-      color: "yellow",
-      url: "/images/yellowPawn.png",
-    },
-  ];
 
   const pickColorHandler = (color: string) => {
+    playSound(onChangeSound);
+
     if (chosenColors.includes(color)) {
       return setChosenColors(chosenColors.filter((item) => item !== color));
     }
@@ -86,6 +71,7 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
         <button
           disabled={chosenColors.length !== chosenPlayers ? true : false}
           onClick={() => {
+            playSound(clickSound);
             setShowChoseColors(true);
             navigate("/local");
           }}
