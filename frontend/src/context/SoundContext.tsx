@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { Howl } from "howler";
 
 type SoundContextType = {
@@ -22,19 +22,22 @@ export const SoundProvider = ({ children }: SoundProviderProps) => {
   const [menuMusic, setMenuMusic] = useState<Howl | null>(null);
 
   useEffect(() => {
-    const menuMusicSound = new Howl({
-      src: ["/sounds/music.mp3"],
-      loop: true,
-    });
+    let menuMusicSound: Howl | null = null;
 
     if (isSoundEnabled) {
+      menuMusicSound = new Howl({
+        src: ["/path/to/menu-music.mp3"],
+        loop: true,
+      });
       menuMusicSound.play();
     }
 
     setMenuMusic(menuMusicSound);
 
     return () => {
-      menuMusicSound.stop();
+      if (menuMusicSound) {
+        menuMusicSound.stop();
+      }
     };
   }, [isSoundEnabled]);
 
