@@ -116,6 +116,30 @@ export const login = asyncHandler(async (req, res) => {
     });
 });
 
+export const getLoginStatus = asyncHandler(async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    res.json({ status: false });
+    return;
+  }
+
+  let verified = jwt.verify(token, process.env.JWT_SECRET);
+
+  if (!verified) {
+    res.json({ status: false });
+    return;
+  }
+
+  if (verified.userId) {
+    let q = "SELECT `userId`, `userName`,`email` FROM users WHERE `userId`= ?";
+
+    let userInfo = await query(q, [verified.userId]);
+
+    res.json({ status: true, userInfo: userInfo[0] });
+  }
+});
+
 export const logout = asyncHandler(async (req, res) => {
   res
     .clearCookie("token", {
