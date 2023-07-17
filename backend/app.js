@@ -2,6 +2,8 @@ import express from "express";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import errorHandler from "./utils/error.js";
+import authRoutes from "./routes/auth.js";
 config();
 
 const app = express();
@@ -17,6 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/api/auth", authRoutes);
+
 app.listen(process.env.PORT, () => {
   console.log("server is listening on", process.env.PORT);
 });
+
+app.use(errorHandler);
