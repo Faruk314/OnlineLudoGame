@@ -7,11 +7,24 @@ import { ImVolumeMute, ImVolumeMute2 } from "react-icons/im";
 import Local from "../modals/Local";
 import { SoundContext } from "../context/SoundContext";
 import { clickSound } from "../constants/constants";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Menu = () => {
+  const navigate = useNavigate();
   const [openLocal, setOpenLocal] = useState(false);
   const { isSoundEnabled, setIsSoundEnabled, playSound } =
     useContext(SoundContext);
+
+  const logoutHandler = async () => {
+    try {
+      await axios.get("http://localhost:5000/api/auth/logout");
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="h-[100vh]">
@@ -68,6 +81,7 @@ const Menu = () => {
           <button
             onClick={() => {
               playSound(clickSound);
+              logoutHandler();
             }}
             className="px-5 flex flex-col justify-between hover:bg-gray-100 items-center py-2 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] h-[5rem]"
           >
