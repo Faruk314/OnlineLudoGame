@@ -26,11 +26,13 @@ const Menu = () => {
         </button>
       </div>
 
-      <div className="flex flex-col items-center justify-center h-full">
-        <img src="/images/menu.png" className="w-[7rem]" />
-        <div className="flex items-center">
-          <span>Ludo</span>
-          <span className="text-3xl text-red-500">GAME</span>
+      <div className="flex flex-col items-center justify-center h-full space-y-10">
+        <div className="flex flex-col items-center">
+          <img src="/images/menu.png" className="w-[7rem]" />
+          <div className="flex items-center">
+            <span className="text-2xl">Ludo</span>
+            <span className="text-4xl text-red-500">GAME</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-5">
