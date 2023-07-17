@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Local = ({ setOpenLocal }: Props) => {
-  const { setChosenPlayers, chosenPlayers } = useContext(GameContext);
+  const { setChosenPlayers, chosenPlayers, initGame } = useContext(GameContext);
   const [showChoseColors, setShowChoseColors] = useState(false);
   const navigate = useNavigate();
   const { playSound } = useContext(SoundContext);
@@ -78,7 +78,9 @@ const Local = ({ setOpenLocal }: Props) => {
               playSound(clickSound);
 
               if (chosenPlayers === 4) {
-                return navigate("/local");
+                initGame();
+                navigate("/local");
+                return;
               }
 
               setShowChoseColors(true);

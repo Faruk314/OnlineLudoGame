@@ -1,14 +1,15 @@
-import React, { createContext, useState, useCallback, useContext } from "react";
+import React, { createContext, useState, useContext } from "react";
 import { Player } from "../classess/Player";
 import { SoundContext } from "./SoundContext";
 import { move, win } from "../constants/constants";
+import axios from "axios";
 
 interface GameContextProps {
   randomNum: null | number;
   players: Player[];
   currentPlayerTurnIndex: null | number;
   highlightedPawns: number[];
-  initGame: () => void;
+  initGame: () => Promise<void>;
   higlightPawns: (randomNum: number) => number[];
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
@@ -26,7 +27,7 @@ export const GameContext = createContext<GameContextProps>({
   players: [],
   currentPlayerTurnIndex: null,
   highlightedPawns: [],
-  initGame: () => {},
+  initGame: async () => {},
   higlightPawns: (randomNum) => [],
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
@@ -52,49 +53,16 @@ export const GameContextProvider = ({ children }: any) => {
     number | null
   >(null);
 
-  const initGame = useCallback(() => {
-    let turns: number[] = [];
-    let currentPlayerIndex: number | null = null;
-    let colors = ["red", "blue", "yellow", "green"];
-    let playerOne: Player | null = null;
-    let playerTwo: Player | null = null;
-    let playerThree: Player | null = null;
-    let playerFour: Player | null = null;
-
-    //this is determining the turns and colors
-    if (chosenPlayers === 4) {
-      turns = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-      colors = colors.sort(() => Math.random() - 0.5);
-      currentPlayerIndex = turns[0];
-
-      playerOne = new Player({ color: colors[0] });
-      playerTwo = new Player({ color: colors[1] });
-      playerThree = new Player({ color: colors[2] });
-      playerFour = new Player({ color: colors[3] });
-
-      setPlayers([playerOne, playerTwo, playerThree, playerFour]);
-    } else if (chosenPlayers === 3) {
-      turns = [0, 1, 2].sort(() => Math.random() - 0.5);
-      currentPlayerIndex = turns[0];
-
-      playerOne = new Player({ color: chosenColors[0] });
-      playerTwo = new Player({ color: chosenColors[1] });
-      playerThree = new Player({ color: chosenColors[2] });
-
-      setPlayers([playerOne, playerTwo, playerThree]);
-    } else if (chosenPlayers === 2) {
-      turns = [0, 1].sort(() => Math.random() - 0.5);
-      currentPlayerIndex = turns[0];
-
-      playerOne = new Player({ color: chosenColors[0] });
-      playerTwo = new Player({ color: chosenColors[1] });
-
-      setPlayers([playerOne, playerTwo]);
+  const initGame = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/game/initGame", {
+        chosenplayersNum: chosenPlayers,
+        chosenColorsArr: chosenColors,
+      });
+    } catch (error) {
+      console.log(error);
     }
-
-    setPlayerTurns(turns);
-    setCurrentPlayerTurnIndex(currentPlayerIndex);
-  }, [chosenPlayers]);
+  };
 
   const higlightPawns = (randomNum: number) => {
     const playerOnMove = players[currentPlayerTurnIndex!];
