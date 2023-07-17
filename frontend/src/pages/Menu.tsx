@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { FcInvite } from "react-icons/fc";
 import { BsPeopleFill } from "react-icons/bs";
 import { MdLeaderboard } from "react-icons/md";
@@ -41,7 +41,7 @@ const Menu = () => {
 
       <div className="flex flex-col items-center justify-center h-full space-y-10">
         <div className="flex flex-col items-center">
-          <img src="/images/menu.png" className="w-[7rem]" />
+          <img src="/images/menu.png" className="w-[7rem]" alt="" />
           <div className="flex items-center">
             <span className="text-2xl">Ludo</span>
             <span className="text-4xl text-red-500">GAME</span>

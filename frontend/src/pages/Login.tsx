@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("farukspahictz@gmail.com");
   const [password, setPassword] = useState("ispitivac");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setIsLoggedIn, setLoggedUserInfo } = useContext(AuthContext);
 
   const loginHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,11 +20,16 @@ const Login = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `http://localhost:5000/api/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
+      setIsLoggedIn(true);
+      setLoggedUserInfo(response.data.userInfo);
       navigate("/menu");
     } catch (error: any) {
       if (
@@ -40,7 +47,7 @@ const Login = () => {
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh]">
       <div className="flex flex-col items-center">
-        <img src="/images/menu.png" className="w-[7rem]" />
+        <img src="/images/menu.png" className="w-[7rem]" alt="" />
 
         <div className="flex items-center">
           <span className="text-2xl">Ludo</span>

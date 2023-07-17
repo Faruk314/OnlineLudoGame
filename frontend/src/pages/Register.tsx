@@ -1,13 +1,14 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { FaPuzzlePiece } from "react-icons/fa";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
   const [email, setEmail] = useState("farukspahictz@gmail.com");
   const [password, setPassword] = useState("ispitivac");
   const [userName, setUsername] = useState("faruk");
   const [message, setMessage] = useState("");
+  const { setIsLoggedIn, setLoggedUserInfo } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -20,12 +21,17 @@ const Register = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/auth/register`, {
-        userName,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `http://localhost:5000/api/auth/register`,
+        {
+          userName,
+          email,
+          password,
+        }
+      );
 
+      setIsLoggedIn(true);
+      setLoggedUserInfo(response.data.userInfo);
       navigate("/menu");
     } catch (error: any) {
       if (
@@ -43,7 +49,7 @@ const Register = () => {
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh]">
       <div className="flex flex-col items-center">
-        <img src="/images/menu.png" className="w-[7rem]" />
+        <img src="/images/menu.png" className="w-[7rem]" alt="" />
 
         <div className="flex items-center">
           <span className="text-2xl">Ludo</span>
