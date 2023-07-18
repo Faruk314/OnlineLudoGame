@@ -12,8 +12,13 @@ interface Props {
 const ChoseColors = ({ setShowChoseColors }: Props) => {
   const navigate = useNavigate();
   const { playSound } = useContext(SoundContext);
-  const { chosenPlayers, setChosenPlayers, setChosenColors, chosenColors } =
-    useContext(GameContext);
+  const {
+    chosenPlayers,
+    setChosenPlayers,
+    setChosenColors,
+    chosenColors,
+    initGame,
+  } = useContext(GameContext);
 
   const pickColorHandler = (color: string) => {
     playSound(onChangeSound);
@@ -73,6 +78,7 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
           onClick={() => {
             playSound(clickSound);
             setShowChoseColors(true);
+            initGame();
             navigate("/local");
           }}
           className="px-5 py-2 font-bold text-white bg-red-500 border border-black rounded-lg disabled:bg-gray-400 hover:bg-red-600 disabled:text-gray-200"

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { FcInvite } from "react-icons/fc";
+import { MdPersonSearch } from "react-icons/md";
 import { BsPeopleFill } from "react-icons/bs";
 import { MdLeaderboard } from "react-icons/md";
 import { ImExit } from "react-icons/im";
@@ -9,9 +9,11 @@ import { SoundContext } from "../context/SoundContext";
 import { clickSound } from "../constants/constants";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import FindMatch from "../modals/FindMatch";
 
 const Menu = () => {
   const navigate = useNavigate();
+  const [openFindMatch, setOpenFindMatch] = useState(false);
   const [openLocal, setOpenLocal] = useState(false);
   const { isSoundEnabled, setIsSoundEnabled, playSound } =
     useContext(SoundContext);
@@ -32,7 +34,7 @@ const Menu = () => {
         <div></div>
         <button
           onClick={() => setIsSoundEnabled((prev) => !prev)}
-          className="flex items-center justify-center w-[2rem] h-[2rem] border-2 border-gray-500 bg-red-500 rounded-md"
+          className="flex items-center justify-center w-[2rem] h-[2rem] border-2 border-black bg-red-500 rounded-md"
         >
           {isSoundEnabled && <ImVolumeMute className="w-full text-white" />}
           {!isSoundEnabled && <ImVolumeMute2 className="w-full text-white" />}
@@ -62,11 +64,12 @@ const Menu = () => {
           <button
             onClick={() => {
               playSound(clickSound);
+              setOpenFindMatch(true);
             }}
             className="px-5 flex flex-col justify-between hover:bg-gray-100 items-center py-2 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] h-[5rem]"
           >
-            <FcInvite size={30} />
-            Invite
+            <MdPersonSearch size={30} className="text-green-500" />
+            Find match
           </button>
           <button
             onClick={() => {
@@ -91,6 +94,7 @@ const Menu = () => {
         </div>
       </div>
       {openLocal && <Local setOpenLocal={setOpenLocal} />}
+      {openFindMatch && <FindMatch setOpenFindMatch={setOpenFindMatch} />}
     </section>
   );
 };

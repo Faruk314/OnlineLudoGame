@@ -14,6 +14,7 @@ const SinglePlayer = () => {
     currentPlayerTurnIndex,
     isGameOver,
     retrieveGameStatus,
+    highlightedPawns,
   } = useContext(GameContext);
   const { playSound } = useContext(SoundContext);
 
@@ -42,7 +43,12 @@ const SinglePlayer = () => {
 
             <div className="flex items-center space-x-2">
               <button
-                disabled={currentPlayerTurnIndex === index ? false : true}
+                disabled={
+                  currentPlayerTurnIndex !== index ||
+                  highlightedPawns.length > 0
+                    ? true
+                    : false
+                }
                 onClick={() => {
                   playSound(diceRoll);
                   handleDiceThrow();

@@ -48,7 +48,7 @@ const Board = () => {
         return (
           <div
             key={cell}
-            className={classNames("relative flex justify-center items-center", {
+            className={classNames("flex items-center justify-center", {
               "border border-gray-300": path.includes(cell + 1),
               "bg-red-600 rounded-full border-none mb-1 mx-1":
                 redZone.playerZones.includes(cell + 1),
