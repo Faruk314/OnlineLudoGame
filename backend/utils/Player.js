@@ -6,7 +6,7 @@ export class Player {
   path = [];
   startingPositions = [];
   startingPoint = null;
-  pawnsInFinalZone = 3;
+  pawnsInFinalZone = 0;
   endpoint = null;
 
   constructor({ color }) {

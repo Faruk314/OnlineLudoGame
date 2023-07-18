@@ -19,20 +19,17 @@ type SoundProviderProps = {
 
 export const SoundProvider = ({ children }: SoundProviderProps) => {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const [menuMusic, setMenuMusic] = useState<Howl | null>(null);
 
   useEffect(() => {
     let menuMusicSound: Howl | null = null;
 
     if (isSoundEnabled) {
       menuMusicSound = new Howl({
-        src: ["/path/to/menu-music.mp3"],
+        src: ["/sounds/music.mp3"],
         loop: true,
       });
       menuMusicSound.play();
     }
-
-    setMenuMusic(menuMusicSound);
 
     return () => {
       if (menuMusicSound) {

@@ -12,7 +12,7 @@ export class Player {
   path: number[] = [];
   startingPositions: number[] = [];
   startingPoint: number | null = null;
-  pawnsInFinalZone: number = 3;
+  pawnsInFinalZone: number = 0;
   endpoint: number | null = null;
 
   constructor({ color }: IPlayer) {
