@@ -62,3 +62,16 @@ export const retrieveGameState = asyncHandler(async (req, res) => {
     throw new Error("Error retrieving game state");
   }
 });
+
+export const updateGameState = asyncHandler(async (req, res) => {
+  const { updatedGameState } = req.body;
+  const userId = req.user.userId;
+
+  try {
+    await client.set(userId, JSON.stringify(updatedGameState));
+    res.status(200).json("Game updated successfully");
+  } catch (error) {
+    res.status(400);
+    throw new Error("Could not update game state");
+  }
+});

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { Player } from "../classess/Player";
 import { SoundContext } from "./SoundContext";
 import { move, win } from "../constants/constants";
@@ -43,6 +43,7 @@ export const GameContext = createContext<GameContextProps>({
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setGameOver] = useState(false);
   const [chosenColors, setChosenColors] = useState<string[]>([]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
@@ -74,6 +75,7 @@ export const GameContextProvider = ({ children }: any) => {
 
       console.log(response.data);
 
+      setGameStarted(true);
       setPlayers(response.data.players);
       setCurrentPlayerTurnIndex(response.data.currentPlayerTurnIndex);
       setHighlightedPawns(response.data.highlightedPawns);
@@ -86,6 +88,43 @@ export const GameContextProvider = ({ children }: any) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const updateGameState = async () => {
+      const game = {
+        isGameOver,
+        chosenPlayers,
+        chosenColors,
+        currentPlayerTurnIndex,
+        highlightedPawns,
+        randomNum,
+        playerTurns,
+        players,
+      };
+
+      try {
+        await axios.post("http://localhost:5000/api/game/updateGameState", {
+          updatedGameState: game,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (gameStarted) {
+      updateGameState();
+    }
+  }, [
+    chosenColors,
+    chosenPlayers,
+    currentPlayerTurnIndex,
+    isGameOver,
+    highlightedPawns,
+    players,
+    randomNum,
+    playerTurns,
+    gameStarted,
+  ]);
 
   const higlightPawns = (randomNum: number) => {
     const playerOnMove = players[currentPlayerTurnIndex!];

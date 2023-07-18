@@ -11,9 +11,7 @@ const SinglePlayer = () => {
     handleDiceThrow,
     players,
     randomNum,
-    initGame,
     currentPlayerTurnIndex,
-    playerTurns,
     isGameOver,
     retrieveGameStatus,
   } = useContext(GameContext);
@@ -22,7 +20,6 @@ const SinglePlayer = () => {
   useEffect(() => {
     retrieveGameStatus();
   }, []);
-  console.log(players);
 
   return (
     <section className="flex items-center justify-center h-[100vh]">
