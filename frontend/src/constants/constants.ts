@@ -4,6 +4,8 @@ const diceRoll = "/sounds/diceRoll.mp3";
 const win = "/sounds/win.mp3";
 const move = "/sounds/move.mp3";
 
+const safeZones = [92, 37, 24, 103, 134, 189, 202, 123];
+
 const path = [
   202, 187, 172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94,
   95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103,
@@ -108,4 +110,5 @@ export {
   diceRoll,
   win,
   move,
+  safeZones,
 };

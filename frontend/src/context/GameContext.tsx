@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { Player } from "../classess/Player";
 import { SoundContext } from "./SoundContext";
-import { move, win } from "../constants/constants";
+import { move, safeZones, win } from "../constants/constants";
 import axios from "axios";
 
 interface GameContextProps {
@@ -173,7 +173,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
-    // const randomNum = 6; // c
+    // const randomNum = 3; // c
     const highlighted = higlightPawns(randomNum);
 
     if (highlighted.length > 0) {
@@ -206,7 +206,7 @@ export const GameContextProvider = ({ children }: any) => {
         const opponentPawnIndex = player.pawnPositions.indexOf(position);
 
         //if the position is found then the pawn is eaten and this find the free space at starting point
-        if (opponentPawnIndex > -1) {
+        if (opponentPawnIndex > -1 && !safeZones.includes(position)) {
           player.pawnPositions[opponentPawnIndex] = findStartingPoint(player);
           pawnEaten = true;
         }

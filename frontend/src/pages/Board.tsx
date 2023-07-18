@@ -6,8 +6,10 @@ import {
   yellowZone,
   blueZone,
   path,
+  safeZones,
 } from "../constants/constants";
 import { GameContext } from "../context/GameContext";
+import { AiFillStar } from "react-icons/ai";
 
 const Board = () => {
   const [cells, setCells] = useState<number[]>([]);
@@ -41,6 +43,8 @@ const Board = () => {
 
         const isHighlighted = highlightedPawns.includes(cell + 1);
 
+        const isSafeZone = safeZones.includes(cell + 1);
+
         return (
           <div
             key={cell}
@@ -64,6 +68,10 @@ const Board = () => {
               "bg-yellow-400 border": yellowZone.finalZones.includes(cell + 1),
             })}
           >
+            {isSafeZone && (
+              <AiFillStar className="absolute text-gray-300 md:text-2xl" />
+            )}
+
             {hasPawnOnCell && (
               <div
                 onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
