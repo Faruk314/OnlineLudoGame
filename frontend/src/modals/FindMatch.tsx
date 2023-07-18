@@ -52,7 +52,7 @@ const FindMatch = ({ setOpenFindMatch }: Props) => {
                   setChosenPlayers(4);
                 }}
                 className={classNames(
-                  "shadow-[0_3px_10px_rgb(0,0,0,0.2)] px-4 flex flex-col justify-center items-center rounded-lg hover:bg-gray-100",
+                  "shadow-[0_3px_10px_rgb(0,0,0,0.2)] h-[5rem] md:h-[6.5rem] px-2 md:px-5 flex flex-col justify-center items-center rounded-lg hover:bg-gray-100",
                   {
                     "border-2 border-red-400": chosenPlayers === 4,
                   }

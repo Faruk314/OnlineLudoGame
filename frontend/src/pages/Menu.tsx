@@ -36,7 +36,7 @@ const Menu = () => {
         <div></div>
         <button
           onClick={() => setIsSoundEnabled((prev) => !prev)}
-          className="flex items-center justify-center w-[2rem] h-[2rem] border-2 border-black bg-red-500 rounded-md"
+          className="flex items-center justify-center w-[2rem] h-[2rem] border border-black bg-red-500 rounded-md"
         >
           {isSoundEnabled && <ImVolumeMute className="w-full text-white" />}
           {!isSoundEnabled && <ImVolumeMute2 className="w-full text-white" />}
@@ -58,7 +58,7 @@ const Menu = () => {
               playSound(clickSound);
               setOpenLocal(true);
             }}
-            className="px-5 py-2 border-2 border-gray-500 text-white hover:bg-red-600 flex flex-col justify-between items-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-red-500 h-[5rem] rounded-lg"
+            className="px-5 py-2 text-white hover:bg-red-600 flex flex-col border border-black justify-between items-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-red-500 h-[5rem] rounded-lg"
           >
             <BsPeopleFill size={30} />
             Local
