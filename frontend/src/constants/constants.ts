@@ -20,12 +20,7 @@ const redZone = {
   playerZones: [33, 34, 48, 49],
   finalZones: [107, 108, 109, 110, 111],
   endpoint: 112,
-  path: [
-    92, 93, 94, 95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100,
-    101, 102, 103, 104, 105, 120, 135, 134, 133, 132, 131, 130, 144, 159, 174,
-    189, 204, 219, 218, 217, 202, 187, 172, 157, 142, 126, 125, 124, 123, 122,
-    121, 106, 107, 108, 109, 110, 111, 112,
-  ],
+  path: findPath(92, 112, [107, 108, 109, 110, 111]),
 };
 
 const greenZone = {
@@ -37,12 +32,7 @@ const greenZone = {
   playerZones: [42, 43, 57, 58],
   finalZones: [23, 38, 53, 68, 83],
   endpoint: 98,
-  path: [
-    24, 39, 54, 69, 84, 100, 101, 102, 103, 104, 105, 120, 135, 134, 133, 132,
-    131, 130, 144, 159, 174, 189, 204, 219, 218, 217, 202, 187, 172, 157, 142,
-    126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94, 95, 96, 82, 67, 52, 37,
-    22, 7, 8, 23, 38, 53, 68, 83, 98,
-  ],
+  path: findPath(24, 98, [23, 38, 53, 68, 83]),
 };
 
 const blueZone = {
@@ -54,12 +44,7 @@ const blueZone = {
   playerZones: [168, 169, 183, 184],
   finalZones: [203, 188, 173, 158, 143],
   endpoint: 128,
-  path: [
-    202, 187, 172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94,
-    95, 96, 82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103,
-    104, 105, 120, 135, 134, 133, 132, 131, 130, 144, 159, 174, 189, 204, 219,
-    218, 203, 188, 173, 158, 143, 128,
-  ],
+  path: findPath(202, 128, [203, 188, 173, 158, 143]),
 };
 
 const yellowZone = {
@@ -71,13 +56,26 @@ const yellowZone = {
   playerZones: [177, 178, 192, 193],
   finalZones: [119, 118, 117, 116, 115],
   endpoint: 114,
-  path: [
-    134, 133, 132, 131, 130, 144, 159, 174, 189, 204, 219, 218, 217, 202, 187,
-    172, 157, 142, 126, 125, 124, 123, 122, 121, 106, 91, 92, 93, 94, 95, 96,
-    82, 67, 52, 37, 22, 7, 8, 9, 24, 39, 54, 69, 84, 100, 101, 102, 103, 104,
-    105, 120, 119, 118, 117, 116, 115, 114,
-  ],
+  path: findPath(134, 114, [119, 118, 117, 116, 115]),
 };
+
+function findPath(
+  startingPoint: number,
+  endpoint: number,
+  finalZones: number[]
+) {
+  const startingPointIndex = path.indexOf(startingPoint);
+  const numbersBefore = path.slice(startingPointIndex);
+  const numbersAfter = path.slice(0, startingPointIndex);
+
+  if (startingPoint === 202) {
+    numbersBefore.pop();
+  } else {
+    numbersAfter.pop();
+  }
+
+  return [...numbersBefore, ...numbersAfter, ...finalZones, endpoint];
+}
 
 const pawns = [
   {
