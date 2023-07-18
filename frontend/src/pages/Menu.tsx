@@ -10,11 +10,13 @@ import { clickSound } from "../constants/constants";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FindMatch from "../modals/FindMatch";
+import Leaderboard from "../modals/Leaderboard";
 
 const Menu = () => {
   const navigate = useNavigate();
   const [openFindMatch, setOpenFindMatch] = useState(false);
   const [openLocal, setOpenLocal] = useState(false);
+  const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { isSoundEnabled, setIsSoundEnabled, playSound } =
     useContext(SoundContext);
 
@@ -29,7 +31,7 @@ const Menu = () => {
   };
 
   return (
-    <section className="h-[100vh]">
+    <section className="h-[100vh] overflow-hidden">
       <div className="flex justify-between p-2">
         <div></div>
         <button
@@ -73,6 +75,7 @@ const Menu = () => {
           </button>
           <button
             onClick={() => {
+              setOpenLeaderboard(true);
               playSound(clickSound);
             }}
             className="px-5 flex flex-col justify-between hover:bg-gray-100 items-center py-2 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] h-[5rem]"
@@ -95,6 +98,9 @@ const Menu = () => {
       </div>
       {openLocal && <Local setOpenLocal={setOpenLocal} />}
       {openFindMatch && <FindMatch setOpenFindMatch={setOpenFindMatch} />}
+      {openLeaderboard && (
+        <Leaderboard setOpenLeaderboard={setOpenLeaderboard} />
+      )}
     </section>
   );
 };
