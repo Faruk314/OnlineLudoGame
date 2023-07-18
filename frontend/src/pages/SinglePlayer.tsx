@@ -15,11 +15,12 @@ const SinglePlayer = () => {
     currentPlayerTurnIndex,
     playerTurns,
     isGameOver,
+    retrieveGameStatus,
   } = useContext(GameContext);
   const { playSound } = useContext(SoundContext);
 
   useEffect(() => {
-    initGame();
+    retrieveGameStatus();
   }, []);
   console.log(players);
 

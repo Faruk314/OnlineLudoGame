@@ -5,7 +5,9 @@ import { Player } from "../utils/Player.js";
 export const initGame = asyncHandler(async (req, res) => {
   const userId = req.user.userId;
 
-  const { chosenplayersNum, chosenColorsArr } = req.body;
+  let chosenplayersNum = req.body.chosenplayersNum;
+  let chosenColorsArr = req.body.chosenColorsArr;
+
   let colors = ["red", "blue", "yellow", "green"];
 
   const game = {
@@ -21,7 +23,7 @@ export const initGame = asyncHandler(async (req, res) => {
 
   if (chosenplayersNum === 4) {
     game.playerTurns = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-    colors = colors.sort(() => Math.random() - 0.5);
+    chosenColorsArr = colors.sort(() => Math.random() - 0.5);
     game.currentPlayerTurnIndex = game.playerTurns[0];
   }
   if (chosenplayersNum === 3) {
@@ -44,5 +46,19 @@ export const initGame = asyncHandler(async (req, res) => {
     res.status(200).json("Game successfully initialized");
   } catch (error) {
     throw new Error("Could not update db in initGame controller");
+  }
+});
+
+export const retrieveGameState = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    let data = await client.get(userId);
+    const result = JSON.parse(data);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400);
+    throw new Error("Error retrieving game state");
   }
 });

@@ -10,6 +10,7 @@ interface GameContextProps {
   currentPlayerTurnIndex: null | number;
   highlightedPawns: number[];
   initGame: () => Promise<void>;
+  retrieveGameStatus: () => Promise<void>;
   higlightPawns: (randomNum: number) => number[];
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
@@ -28,6 +29,7 @@ export const GameContext = createContext<GameContextProps>({
   currentPlayerTurnIndex: null,
   highlightedPawns: [],
   initGame: async () => {},
+  retrieveGameStatus: async () => {},
   higlightPawns: (randomNum) => [],
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
@@ -59,6 +61,27 @@ export const GameContextProvider = ({ children }: any) => {
         chosenplayersNum: chosenPlayers,
         chosenColorsArr: chosenColors,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const retrieveGameStatus = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/game/retrieveGameState"
+      );
+
+      console.log(response.data);
+
+      setPlayers(response.data.players);
+      setCurrentPlayerTurnIndex(response.data.currentPlayerTurnIndex);
+      setHighlightedPawns(response.data.highlightedPawns);
+      setPlayerTurns(response.data.playerTurns);
+      setChosenPlayers(response.data.chosenPlayers);
+      setChosenColors(response.data.chosenColors);
+      setGameOver(response.data.isGameOver);
+      setRandomNum(response.data.randomNum);
     } catch (error) {
       console.log(error);
     }
@@ -240,6 +263,7 @@ export const GameContextProvider = ({ children }: any) => {
     higlightPawns,
     handleDiceThrow,
     handlePlayerMove,
+    retrieveGameStatus,
   };
 
   return (
