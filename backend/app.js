@@ -6,9 +6,14 @@ import errorHandler from "./utils/error.js";
 import authRoutes from "./routes/auth.js";
 import gameRoutes from "./routes/game.js";
 import { Redis } from "ioredis";
+import http from "http";
+import setupSocket from "./socket.js";
 config();
 
 const app = express();
+
+const server = http.createServer(app);
+setupSocket();
 
 app.use(
   cors({
