@@ -6,6 +6,7 @@ import { GameContextProvider } from "./context/GameContext";
 import { BrowserRouter } from "react-router-dom";
 import { SoundProvider } from "./context/SoundContext";
 import { AuthContextProvider } from "./context/AuthContext";
+import { SocketContextProvider } from "./context/SocketContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -13,13 +14,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <SoundProvider>
-        <GameContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </GameContextProvider>
-      </SoundProvider>
+      <SocketContextProvider>
+        <SoundProvider>
+          <GameContextProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </GameContextProvider>
+        </SoundProvider>
+      </SocketContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );
