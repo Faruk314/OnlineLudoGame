@@ -68,14 +68,52 @@ export default function setupSocket() {
         return;
       }
 
+      if (playersNumber === 4) {
+        if (!fourPlayerQueue.includes(socket.userId)) {
+          fourPlayerQueue.push(socket.userId);
+        }
+
+        if (fourPlayerQueue.length > 3) {
+          const players = [];
+          const gameId = uuidv4();
+
+          for (let i = 0; i < 4; i++) {
+            const playerId = fourPlayerQueue.splice(0, 1)[0];
+            players.push(playerId);
+            const socketId = getUser(playerId);
+            const playerSocket = io.sockets.sockets.get(socketId);
+            playerSocket.join(gameId);
+          }
+
+          const [firstPlayerId, secondPlayerId, thirdPlayerId, fourthPlayerId] =
+            players;
+
+          let q =
+            "INSERT INTO games (`gameId`,`playerOne`,`playerTwo`,`playerThree`,`playerFour`) VALUES (?,?,?,?,?)";
+
+          let data = await query(q, [
+            gameId,
+            firstPlayerId,
+            secondPlayerId,
+            thirdPlayerId,
+            fourthPlayerId,
+          ]);
+
+          let gameState = createGame(players);
+          await client.set(gameId, JSON.stringify(gameState));
+
+          io.to(gameId).emit("gameStart", gameId);
+        }
+      }
+
       if (playersNumber === 2) {
         if (!twoPlayersQueue.includes(socket.userId)) {
           twoPlayersQueue.push(socket.userId);
         }
 
         if (twoPlayersQueue.length > 1) {
-          let firstPlayerId = twoPlayersQueue.splice(0, 1)[0];
-          let secondPlayerId = twoPlayersQueue.splice(0, 1)[0];
+          const firstPlayerId = twoPlayersQueue.splice(0, 1)[0];
+          const secondPlayerId = twoPlayersQueue.splice(0, 1)[0];
 
           const playerOnesocketId = getUser(firstPlayerId);
           const playerTwoSocketId = getUser(secondPlayerId);
@@ -117,8 +155,6 @@ export default function setupSocket() {
         twoPlayersQueue = twoPlayersQueue.filter(
           (userId) => userId !== socket.userId
         );
-
-        console.log(twoPlayersQueue);
       } else {
         fourPlayerQueue = fourPlayerQueue.filter(
           (userId) => userId !== socket.userId
