@@ -3,6 +3,7 @@ import { GameContext } from "../context/GameContext";
 import classNames from "classnames";
 import { SoundContext } from "../context/SoundContext";
 import { onChangeSound } from "../constants/constants";
+import { SocketContext } from "../context/SocketContext";
 
 interface Props {
   setOpenFindMatch: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,6 +12,7 @@ interface Props {
 const FindMatch = ({ setOpenFindMatch }: Props) => {
   const [findingMatch, setFindingMatch] = useState(false);
   const { chosenPlayers, setChosenPlayers } = useContext(GameContext);
+  const { socket } = useContext(SocketContext);
   const { playSound } = useContext(SoundContext);
 
   console.log(chosenPlayers);
@@ -66,6 +68,7 @@ const FindMatch = ({ setOpenFindMatch }: Props) => {
             <button
               disabled={chosenPlayers === 0 ? true : false}
               onClick={() => {
+                socket?.emit("findMatch", chosenPlayers);
                 setFindingMatch(true);
               }}
               className="px-3 py-2 font-bold text-white bg-red-500 border border-black rounded-lg disabled:bg-gray-400 hover:bg-red-600 disabled:text-gray-200"
@@ -82,6 +85,7 @@ const FindMatch = ({ setOpenFindMatch }: Props) => {
 
             <button
               onClick={() => {
+                socket?.emit("cancelFindMatch", chosenPlayers);
                 setFindingMatch(false);
                 setChosenPlayers(0);
               }}

@@ -1,17 +1,21 @@
 import React, { useContext, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Menu from "./pages/Menu";
 import SinglePlayer from "./pages/SinglePlayer";
 import axios from "axios";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthContext } from "./context/AuthContext";
+import Multiplayer from "./pages/Multiplayer";
+import { SocketContext } from "./context/SocketContext";
 
 axios.defaults.withCredentials = true;
 
 function App() {
+  const navigate = useNavigate();
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
     useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -31,6 +35,16 @@ function App() {
     getLoginStatus();
   }, []);
 
+  useEffect(() => {
+    socket?.on("gameStart", () => {
+      navigate("/multiplayer");
+    });
+
+    return () => {
+      socket?.off("gameStart");
+    };
+  }, [socket, navigate]);
+
   console.log(isLoggedIn, "app");
 
   return (
@@ -40,6 +54,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/local" element={<SinglePlayer />} />
+        <Route path="/multiplayer" element={<Multiplayer />} />
       </Routes>
     </div>
   );

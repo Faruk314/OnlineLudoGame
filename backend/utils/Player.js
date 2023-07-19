@@ -8,8 +8,13 @@ export class Player {
   startingPoint = null;
   pawnsInFinalZone = 0;
   endpoint = null;
+  userId = null;
 
-  constructor({ color }) {
+  constructor({ color, userId }) {
+    if (userId) {
+      this.userId = userId;
+    }
+
     if (!this.color) {
       this.color = color;
 

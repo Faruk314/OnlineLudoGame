@@ -173,7 +173,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     const randomNum = Math.floor(Math.random() * 6 + 1);
-    // const randomNum = 3; // c
+
     const highlighted = higlightPawns(randomNum);
 
     if (highlighted.length > 0) {
