@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import { AuthContext } from "./context/AuthContext";
 import Multiplayer from "./pages/Multiplayer";
 import { SocketContext } from "./context/SocketContext";
+import { GameContext } from "./context/GameContext";
 
 axios.defaults.withCredentials = true;
 
@@ -16,6 +17,7 @@ function App() {
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
+  const { setGameId, gameId } = useContext(GameContext);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -36,7 +38,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    socket?.on("gameStart", () => {
+    socket?.emit("reconnectToRoom", gameId);
+  }, [gameId]);
+
+  useEffect(() => {
+    socket?.on("gameStart", (gameId) => {
+      setGameId(gameId);
       navigate("/multiplayer");
     });
 

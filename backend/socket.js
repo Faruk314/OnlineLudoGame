@@ -62,6 +62,16 @@ export default function setupSocket() {
 
     addUser(socket.userId, socket.id);
 
+    socket.on("reconnectToRoom", (gameRoomId) => {
+      const userSocketId = getUser(socket.userId);
+
+      if (userSocketId) {
+        const userSocket = io.sockets.sockets.get(userSocketId);
+
+        userSocket.join(gameRoomId);
+      }
+    });
+
     socket.on("findMatch", async (playersNumber) => {
       if (playersNumber !== 2 && playersNumber !== 4) {
         console.log("Invalid number of players");
