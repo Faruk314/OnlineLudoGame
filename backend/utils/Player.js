@@ -9,6 +9,7 @@ export class Player {
   pawnsInFinalZone = 0;
   endpoint = null;
   userId = null;
+  userName = null;
 
   constructor({ color, userId }) {
     if (userId) {

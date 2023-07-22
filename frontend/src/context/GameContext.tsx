@@ -228,6 +228,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     if (gameId) {
+      console.log("uslo u dice throw");
       socket?.emit("diceRoll", gameId);
       return;
     }
@@ -277,6 +278,14 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handlePlayerMove = (pawnIndex: number) => {
+    console.log(gameId);
+
+    if (gameId) {
+      console.log("uslo u handle player move frontend");
+      socket?.emit("playerMove", { gameId, pawnIndex });
+      return;
+    }
+
     const updatedPlayers = [...players];
     const playerOnMove = players[currentPlayerTurnIndex!];
     playSound(move);

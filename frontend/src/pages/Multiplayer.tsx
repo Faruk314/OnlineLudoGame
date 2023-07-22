@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { GameContext } from "../context/GameContext";
 import { SoundContext } from "../context/SoundContext";
@@ -6,7 +6,6 @@ import classNames from "classnames";
 import GameOver from "../modals/GameOver";
 import Board from "./Board";
 import { diceRoll } from "../constants/constants";
-import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
 import { GameState } from "../types/types";
 
@@ -17,30 +16,58 @@ const Multiplayer = () => {
     randomNum,
     currentPlayerTurnIndex,
     isGameOver,
-    highlightedPawns,
     retrieveMultiplayerGameStats,
     updateGameState,
   } = useContext(GameContext);
   const { playSound } = useContext(SoundContext);
-  const { loggedUserInfo } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    retrieveMultiplayerGameStats();
+    const fetchGameData = async () => {
+      await retrieveMultiplayerGameStats();
+      setIsLoading(false);
+    };
+
+    if (isLoading) {
+      fetchGameData();
+    }
   }, []);
 
   useEffect(() => {
     socket?.on("diceRolled", (gameState: GameState) => {
-      console.log(gameState, "multiplayer");
       updateGameState(gameState);
     });
-  }, []);
+
+    return () => {
+      socket?.off("diceRolled");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on("playerMoved", (gameState: GameState) => {
+      updateGameState(gameState);
+    });
+
+    return () => {
+      socket?.off("playerMoved");
+    };
+  }, [socket]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <section className="flex items-center justify-center h-[100vh]">
       <span className="fixed top-2">{`player turn ${
-        currentPlayerTurnIndex! + 1
+        players[currentPlayerTurnIndex!].userName
       }`}</span>
+
       <span className="fixed text-2xl text-blue-500">{randomNum}</span>
       <div className="relative flex justify-center items-center h-[700px]">
         {players.map((player, index) => (
@@ -57,15 +84,6 @@ const Multiplayer = () => {
 
             <div className="flex items-center space-x-2">
               <button
-                disabled={
-                  currentPlayerTurnIndex === index ||
-                  highlightedPawns.length > 0
-                    ? true
-                    : players[currentPlayerTurnIndex!].userId ===
-                      loggedUserInfo?.userId
-                    ? false
-                    : false
-                }
                 onClick={() => {
                   playSound(diceRoll);
                   handleDiceThrow();

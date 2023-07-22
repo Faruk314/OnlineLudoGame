@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import query from "./db.js";
 import { client } from "./app.js";
 import { v4 as uuidv4 } from "uuid";
-import { createGame, highlightPawns } from "./game.js";
+import { createGame, handlePlayerMove, highlightPawns } from "./game.js";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -62,14 +62,19 @@ export default function setupSocket() {
 
     addUser(socket.userId, socket.id);
 
-    socket.on("reconnectToRoom", (gameRoomId) => {
+    socket.on("reconnectToRoom", (gameId) => {
       const userSocketId = getUser(socket.userId);
 
       if (userSocketId) {
         const userSocket = io.sockets.sockets.get(userSocketId);
 
-        userSocket.join(gameRoomId);
+        userSocket.join(gameId);
       }
+    });
+
+    socket.on("disconnect", () => {
+      removeUser(socket.id);
+      console.log("disconnected");
     });
 
     socket.on("findMatch", async (playersNumber) => {
@@ -137,13 +142,13 @@ export default function setupSocket() {
 
           let gameId = uuidv4();
 
+          playerOneSocket.join(gameId);
+          playerTwoSocket.join(gameId);
+
           let q =
             "INSERT INTO games (`gameId`,`playerOne`,`playerTwo`) VALUES (?,?,?)";
 
           let data = await query(q, [gameId, firstPlayerId, secondPlayerId]);
-
-          playerOneSocket.join(gameId);
-          playerTwoSocket.join(gameId);
 
           let players = [firstPlayerId, secondPlayerId];
 
@@ -180,7 +185,22 @@ export default function setupSocket() {
 
       await client.set(gameId, JSON.stringify(gameState));
 
-      io.to(gameId).emit("diceRolled", gameState);
+      io.to(gameId).emit("diceRolled", { gameId, ...gameState });
+    });
+
+    socket.on("playerMove", async (data) => {
+      console.log("uslo u playerMove backend socket.io");
+      const gameData = await client.get(data.gameId);
+      let gameState = JSON.parse(gameData);
+
+      handlePlayerMove(gameState, data.pawnIndex);
+
+      await client.set(data.gameId, JSON.stringify(gameState));
+
+      io.to(data.gameId).emit("playerMoved", {
+        gameId: data.gameId,
+        ...gameState,
+      });
     });
   });
 

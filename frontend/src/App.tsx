@@ -17,7 +17,7 @@ function App() {
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
-  const { setGameId, gameId } = useContext(GameContext);
+  const { gameId } = useContext(GameContext);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -38,8 +38,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    socket?.emit("reconnectToRoom", gameId);
-  }, [gameId]);
+    socket?.on("connect", () => {
+      if (gameId) {
+        socket?.emit("reconnectToRoom", gameId);
+      }
+    });
+  }, [gameId, socket, isLoggedIn]);
 
   useEffect(() => {
     socket?.on("gameStart", (gameId) => {
