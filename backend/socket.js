@@ -171,6 +171,41 @@ export default function setupSocket() {
         );
       }
     });
+
+    socket.on("diceRoll", async (gameId) => {
+      const gameData = await client.get(gameId);
+      let gameState = JSON.parse(gameData);
+      const playerOnMove = gameState.players[gameState.currentPlayerTurnIndex];
+      const highlighted = [];
+      const randomNum = Math.floor(Math.random() * 6 + 1);
+
+      playerOnMove.pawnPositions.forEach((position) => {
+        //find pawns that are in a starting positions(playerZones)
+        if (
+          playerOnMove?.startingPositions.includes(position) &&
+          randomNum === 6
+        ) {
+          highlighted.push(position);
+        }
+
+        //find pawns that are in path
+        let positionIndex = playerOnMove.path.findIndex(
+          (pathPosition) => pathPosition === position
+        );
+
+        if (positionIndex !== -1) {
+          let nextPossiblePositionIndex = positionIndex + randomNum;
+
+          let nextPossiblePosition = playerOnMove.path.find(
+            (position, index) => index === nextPossiblePositionIndex
+          );
+
+          if (nextPossiblePosition === undefined) return;
+
+          highlighted.push(position);
+        }
+      });
+    });
   });
 
   io.listen(5001);

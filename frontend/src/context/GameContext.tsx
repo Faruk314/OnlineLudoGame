@@ -9,6 +9,8 @@ import { Player } from "../classess/Player";
 import { SoundContext } from "./SoundContext";
 import { move, safeZones, win } from "../constants/constants";
 import axios from "axios";
+import { SocketContext } from "./SocketContext";
+import { GameState } from "../types/types";
 
 interface GameContextProps {
   randomNum: null | number;
@@ -30,6 +32,7 @@ interface GameContextProps {
   chosenPlayers: number;
   gameId: string | null;
   retrieveMultiplayerGameStats: () => Promise<void>;
+  updateGameState: (gameState: GameState) => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -52,6 +55,7 @@ export const GameContext = createContext<GameContextProps>({
   gameId: null,
   setGameId: () => {},
   retrieveMultiplayerGameStats: async () => {},
+  updateGameState: (gameState) => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -68,6 +72,16 @@ export const GameContextProvider = ({ children }: any) => {
   const [currentPlayerTurnIndex, setCurrentPlayerTurnIndex] = useState<
     number | null
   >(null);
+  const { socket } = useContext(SocketContext);
+
+  const updateGameState = (gameState: GameState) => {
+    setGameId(gameState.gameId);
+    setPlayerTurns(gameState.playerTurns);
+    setHighlightedPawns(gameState.highlightedPawns);
+    setGameOver(gameState.isGameOver);
+    setPlayers(gameState.players);
+    setCurrentPlayerTurnIndex(gameState.currentPlayerTurnIndex);
+  };
 
   const retrieveMultiplayerGameStats = useCallback(async () => {
     try {
@@ -78,11 +92,14 @@ export const GameContextProvider = ({ children }: any) => {
       console.log(response.data);
       const gameState = response.data.gameState;
 
-      setPlayerTurns(gameState.playerTurns);
-      setHighlightedPawns(gameState.highlightedPawns);
-      setGameOver(gameState.isGameOver);
-      setPlayers(gameState.players);
-      setCurrentPlayerTurnIndex(gameState.currentPlayerTurnIndex);
+      updateGameState({
+        gameId: response.data.gameId,
+        playerTurns: gameState.playerTurns,
+        highlightedPawns: gameState.highlightedPawns,
+        isGameOver: gameState.isGameOver,
+        players: gameState.players,
+        currentPlayerTurnIndex: gameState.currentPlayerTurnIndex,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -204,6 +221,12 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handleDiceThrow = () => {
+    if (gameId) {
+      socket?.emit("diceRoll", gameId);
+
+      return;
+    }
+
     const randomNum = Math.floor(Math.random() * 6 + 1);
 
     const highlighted = higlightPawns(randomNum);
@@ -321,6 +344,7 @@ export const GameContextProvider = ({ children }: any) => {
   const contextValue: GameContextProps = {
     gameId,
     retrieveMultiplayerGameStats,
+    updateGameState,
     setGameId,
     setChosenPlayers,
     setChosenColors,

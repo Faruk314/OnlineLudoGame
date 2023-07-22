@@ -14,6 +14,8 @@ export class Player {
   startingPoint: number | null = null;
   pawnsInFinalZone: number = 0;
   endpoint: number | null = null;
+  userId: number | null = null;
+  userName: string | null = null;
 
   constructor({ color }: IPlayer) {
     if (!this.color) {

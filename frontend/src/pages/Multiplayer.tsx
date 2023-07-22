@@ -6,6 +6,7 @@ import classNames from "classnames";
 import GameOver from "../modals/GameOver";
 import Board from "./Board";
 import { diceRoll } from "../constants/constants";
+import { AuthContext } from "../context/AuthContext";
 
 const Multiplayer = () => {
   const {
@@ -18,6 +19,7 @@ const Multiplayer = () => {
     retrieveMultiplayerGameStats,
   } = useContext(GameContext);
   const { playSound } = useContext(SoundContext);
+  const { loggedUserInfo } = useContext(AuthContext);
 
   useEffect(() => {
     retrieveMultiplayerGameStats();
@@ -40,13 +42,15 @@ const Multiplayer = () => {
               "absolute bottom-0 right-0": player.color === "yellow",
             })}
           >
-            <div className="">{`player ${index + 1}`}</div>
+            <div className="">{`player ${player.userName}`}</div>
 
             <div className="flex items-center space-x-2">
               <button
                 disabled={
-                  currentPlayerTurnIndex !== index ||
-                  highlightedPawns.length > 0
+                  players[currentPlayerTurnIndex!].userId !==
+                    loggedUserInfo?.userId ||
+                  highlightedPawns.length > 0 ||
+                  currentPlayerTurnIndex === index
                     ? true
                     : false
                 }
