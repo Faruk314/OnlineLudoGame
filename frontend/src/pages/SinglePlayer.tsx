@@ -53,7 +53,7 @@ const SinglePlayer = () => {
                   playSound(diceRoll);
                   handleDiceThrow();
                 }}
-                className="p-2 text-white bg-blue-500 hover:bg-blue-400 disabled:bg-gray-400"
+                className="p-2 text-white bg-red-500 hover:bg-red-400 disabled:bg-gray-400"
               >
                 Throw
               </button>

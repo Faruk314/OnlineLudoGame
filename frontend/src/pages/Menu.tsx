@@ -11,14 +11,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FindMatch from "../modals/FindMatch";
 import Leaderboard from "../modals/Leaderboard";
+import { AuthContext } from "../context/AuthContext";
+import { BiImageAdd } from "react-icons/bi";
 
 const Menu = () => {
+  const [openChangePhoto, setOpenChangePhoto] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
   const [openFindMatch, setOpenFindMatch] = useState(false);
   const [openLocal, setOpenLocal] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { isSoundEnabled, setIsSoundEnabled, playSound } =
     useContext(SoundContext);
+  const { loggedUserInfo } = useContext(AuthContext);
 
   const logoutHandler = async () => {
     try {
@@ -31,9 +36,34 @@ const Menu = () => {
   };
 
   return (
-    <section className="h-[100vh] overflow-hidden">
-      <div className="flex justify-between p-2">
-        <div></div>
+    <section className="h-[100vh]">
+      <div className="fixed flex justify-between w-full p-2">
+        <div
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          className="relative flex flex-col space-y-2"
+        >
+          <img
+            src={loggedUserInfo?.image || "/images/custom.png"}
+            alt=""
+            className="w-20 h-20 border border-black rounded-md"
+          />
+
+          <div className="flex items-center justify-center font-bold text-white bg-red-500 border border-black rounded-md">
+            <span>{loggedUserInfo?.userName}</span>
+          </div>
+
+          <span>playerID: {loggedUserInfo?.userId}</span>
+
+          {isHovering && (
+            <button
+              onClick={() => setOpenChangePhoto(true)}
+              className="absolute top-0 p-1 text-white bg-red-500 border border-black rounded-full hover:bg-red-400 right-[-1rem]"
+            >
+              <BiImageAdd size={22} />
+            </button>
+          )}
+        </div>
         <button
           onClick={() => setIsSoundEnabled((prev) => !prev)}
           className="flex items-center justify-center w-[2rem] h-[2rem] border border-black bg-red-500 rounded-md"
@@ -101,6 +131,7 @@ const Menu = () => {
       {openLeaderboard && (
         <Leaderboard setOpenLeaderboard={setOpenLeaderboard} />
       )}
+      {openChangePhoto && <}
     </section>
   );
 };
