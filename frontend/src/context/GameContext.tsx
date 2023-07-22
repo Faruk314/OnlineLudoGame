@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import { Player } from "../classess/Player";
 import { SoundContext } from "./SoundContext";
 import { move, safeZones, win } from "../constants/constants";
@@ -19,8 +25,11 @@ interface GameContextProps {
   setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   setChosenColors: React.Dispatch<React.SetStateAction<string[]>>;
   setChosenPlayers: React.Dispatch<React.SetStateAction<number>>;
+  setGameId: React.Dispatch<React.SetStateAction<string | null>>;
   chosenColors: string[];
   chosenPlayers: number;
+  gameId: string | null;
+  retrieveMultiplayerGameStats: () => Promise<void>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -40,9 +49,13 @@ export const GameContext = createContext<GameContextProps>({
   setChosenPlayers: () => {},
   chosenColors: [],
   chosenPlayers: 0,
+  gameId: null,
+  setGameId: () => {},
+  retrieveMultiplayerGameStats: async () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [gameId, setGameId] = useState<string | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setGameOver] = useState(false);
   const [chosenColors, setChosenColors] = useState<string[]>([]);
@@ -55,6 +68,25 @@ export const GameContextProvider = ({ children }: any) => {
   const [currentPlayerTurnIndex, setCurrentPlayerTurnIndex] = useState<
     number | null
   >(null);
+
+  const retrieveMultiplayerGameStats = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/game/getMultiplayerGameState"
+      );
+
+      console.log(response.data);
+      const gameState = response.data.gameState;
+
+      setPlayerTurns(gameState.playerTurns);
+      setHighlightedPawns(gameState.highlightedPawns);
+      setGameOver(gameState.isGameOver);
+      setPlayers(gameState.players);
+      setCurrentPlayerTurnIndex(gameState.currentPlayerTurnIndex);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   const initGame = async () => {
     try {
@@ -287,6 +319,9 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const contextValue: GameContextProps = {
+    gameId,
+    retrieveMultiplayerGameStats,
+    setGameId,
     setChosenPlayers,
     setChosenColors,
     chosenPlayers,

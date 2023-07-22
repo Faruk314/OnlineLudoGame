@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { client } from "../app.js";
 import { Player } from "../utils/Player.js";
+import query from "../db.js";
 
 export const initGame = asyncHandler(async (req, res) => {
   const userId = req.user.userId;
@@ -74,4 +75,47 @@ export const updateGameState = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Could not update game state");
   }
+});
+
+export const getMultiplayerGameState = asyncHandler(async (req, res) => {
+  const userId = 2;
+
+  //retrieve gameId
+  let q =
+    "SELECT `gameId` FROM games WHERE `playerOne` = ? OR `playerTwo` = ? OR `playerThree` = ? OR `playerFour` = ?";
+
+  let data = await query(q, [userId, userId, userId, userId]);
+
+  //this will retrieve ids for all players in that specific game
+  q = `SELECT g.playerOne, g.playerTwo, g.playerThree, g.playerFour FROM games g WHERE g.gameId = ?`;
+
+  let playersIds = await query(q, [data[0].gameId]);
+
+  let playersData = [];
+
+  for (let i = 0; i < Object.values(playersIds[0]).length; i++) {
+    let playerId = Object.values(playersIds[0]);
+
+    if (playerId[i] !== null) {
+      let playerInfoQuery =
+        "SELECT u.userName, u.userId FROM users u WHERE u.userId = ?";
+      let playerData = await query(playerInfoQuery, [playerId[i]]);
+
+      playersData.push(playerData[0]);
+    }
+  }
+
+  const gameData = await client.get(data[0].gameId);
+  const gameState = JSON.parse(gameData);
+
+  gameState.players.forEach((player, index) => {
+    if (playersData[index].userId === player.userId) {
+      player.userName = playersData[index].userName;
+    }
+  });
+
+  res.json({
+    gameState,
+    gameId: data[0].gameId,
+  });
 });

@@ -43,7 +43,6 @@ function App() {
 
   useEffect(() => {
     socket?.on("gameStart", (gameId) => {
-      setGameId(gameId);
       navigate("/multiplayer");
     });
 
