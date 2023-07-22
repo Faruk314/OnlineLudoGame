@@ -29,3 +29,53 @@ export const createGame = (usersIds) => {
 
   return game;
 };
+
+const switchTurns = (gameState) => {
+  let nextPlayerTurn = gameState.currentPlayerTurnIndex + 1;
+
+  if (nextPlayerTurn > gameState.playerTurns.length - 1) {
+    nextPlayerTurn = 0;
+  }
+
+  gameState.currentPlayerTurnIndex = nextPlayerTurn;
+};
+
+export const highlightPawns = (gameState) => {
+  console.log(gameState, "gameState");
+
+  const playerOnMove = gameState.players[gameState.currentPlayerTurnIndex];
+  const highlighted = [];
+  const randomNum = Math.floor(Math.random() * 6 + 1);
+
+  gameState.randomNum = randomNum;
+
+  playerOnMove.pawnPositions.forEach((position) => {
+    //find pawns that are in a starting positions(playerZones)
+    if (playerOnMove?.startingPositions.includes(position) && randomNum === 6) {
+      highlighted.push(position);
+    }
+
+    //find pawns that are in path
+    let positionIndex = playerOnMove.path.findIndex(
+      (pathPosition) => pathPosition === position
+    );
+
+    if (positionIndex !== -1) {
+      let nextPossiblePositionIndex = positionIndex + randomNum;
+
+      let nextPossiblePosition = playerOnMove.path.find(
+        (position, index) => index === nextPossiblePositionIndex
+      );
+
+      if (nextPossiblePosition === undefined) return;
+
+      highlighted.push(position);
+    }
+  });
+
+  if (highlighted.length > 0) {
+    gameState.highlightedPawns = highlighted;
+  } else {
+    switchTurns(gameState);
+  }
+};

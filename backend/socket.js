@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import query from "./db.js";
 import { client } from "./app.js";
 import { v4 as uuidv4 } from "uuid";
-import { createGame } from "./game.js";
+import { createGame, highlightPawns } from "./game.js";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -175,36 +175,12 @@ export default function setupSocket() {
     socket.on("diceRoll", async (gameId) => {
       const gameData = await client.get(gameId);
       let gameState = JSON.parse(gameData);
-      const playerOnMove = gameState.players[gameState.currentPlayerTurnIndex];
-      const highlighted = [];
-      const randomNum = Math.floor(Math.random() * 6 + 1);
 
-      playerOnMove.pawnPositions.forEach((position) => {
-        //find pawns that are in a starting positions(playerZones)
-        if (
-          playerOnMove?.startingPositions.includes(position) &&
-          randomNum === 6
-        ) {
-          highlighted.push(position);
-        }
+      highlightPawns(gameState);
 
-        //find pawns that are in path
-        let positionIndex = playerOnMove.path.findIndex(
-          (pathPosition) => pathPosition === position
-        );
+      await client.set(gameId, JSON.stringify(gameState));
 
-        if (positionIndex !== -1) {
-          let nextPossiblePositionIndex = positionIndex + randomNum;
-
-          let nextPossiblePosition = playerOnMove.path.find(
-            (position, index) => index === nextPossiblePositionIndex
-          );
-
-          if (nextPossiblePosition === undefined) return;
-
-          highlighted.push(position);
-        }
-      });
+      io.to(gameId).emit("diceRolled", gameState);
     });
   });
 

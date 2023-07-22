@@ -114,6 +114,8 @@ export const getMultiplayerGameState = asyncHandler(async (req, res) => {
     }
   });
 
+  await client.set(data[0].gameId, JSON.stringify(gameState));
+
   res.json({
     gameState,
     gameId: data[0].gameId,

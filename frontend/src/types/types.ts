@@ -20,4 +20,7 @@ export interface GameState {
   isGameOver: boolean;
   players: Player[];
   currentPlayerTurnIndex: number;
+  chosenColors: string[];
+  randomNum: number;
+  chosenPlayers: number;
 }

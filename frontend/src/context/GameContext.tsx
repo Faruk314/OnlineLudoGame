@@ -81,6 +81,9 @@ export const GameContextProvider = ({ children }: any) => {
     setGameOver(gameState.isGameOver);
     setPlayers(gameState.players);
     setCurrentPlayerTurnIndex(gameState.currentPlayerTurnIndex);
+    setChosenColors(gameState.chosenColors);
+    setChosenPlayers(gameState.chosenPlayers);
+    setRandomNum(gameState.randomNum);
   };
 
   const retrieveMultiplayerGameStats = useCallback(async () => {
@@ -99,6 +102,9 @@ export const GameContextProvider = ({ children }: any) => {
         isGameOver: gameState.isGameOver,
         players: gameState.players,
         currentPlayerTurnIndex: gameState.currentPlayerTurnIndex,
+        randomNum: gameState.randomNum,
+        chosenPlayers: gameState.chosenPlayers,
+        chosenColors: gameState.chosenColors,
       });
     } catch (error) {
       console.log(error);
@@ -223,7 +229,6 @@ export const GameContextProvider = ({ children }: any) => {
   const handleDiceThrow = () => {
     if (gameId) {
       socket?.emit("diceRoll", gameId);
-
       return;
     }
 

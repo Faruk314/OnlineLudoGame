@@ -7,6 +7,8 @@ import GameOver from "../modals/GameOver";
 import Board from "./Board";
 import { diceRoll } from "../constants/constants";
 import { AuthContext } from "../context/AuthContext";
+import { SocketContext } from "../context/SocketContext";
+import { GameState } from "../types/types";
 
 const Multiplayer = () => {
   const {
@@ -17,12 +19,21 @@ const Multiplayer = () => {
     isGameOver,
     highlightedPawns,
     retrieveMultiplayerGameStats,
+    updateGameState,
   } = useContext(GameContext);
   const { playSound } = useContext(SoundContext);
   const { loggedUserInfo } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     retrieveMultiplayerGameStats();
+  }, []);
+
+  useEffect(() => {
+    socket?.on("diceRolled", (gameState: GameState) => {
+      console.log(gameState, "multiplayer");
+      updateGameState(gameState);
+    });
   }, []);
 
   return (
@@ -47,11 +58,12 @@ const Multiplayer = () => {
             <div className="flex items-center space-x-2">
               <button
                 disabled={
-                  players[currentPlayerTurnIndex!].userId !==
-                    loggedUserInfo?.userId ||
-                  highlightedPawns.length > 0 ||
-                  currentPlayerTurnIndex === index
+                  currentPlayerTurnIndex === index ||
+                  highlightedPawns.length > 0
                     ? true
+                    : players[currentPlayerTurnIndex!].userId ===
+                      loggedUserInfo?.userId
+                    ? false
                     : false
                 }
                 onClick={() => {
