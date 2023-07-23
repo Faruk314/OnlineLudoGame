@@ -11,7 +11,7 @@ export interface UserInfo {
   userId: number;
   userName: string;
   email?: string;
-  image: string;
+  image: number | null;
 }
 
 export const AuthContext = createContext<AuthContextProps>({

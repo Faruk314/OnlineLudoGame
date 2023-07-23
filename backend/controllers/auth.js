@@ -34,7 +34,7 @@ export const register = asyncHandler(async (req, res) => {
     result = await query(q, [userName, email, hash]);
 
     q =
-      "SELECT `userId` , `userName`,`email` FROM users WHERE `email`= ? AND `password`= ?";
+      "SELECT `userId`,`userName`,`email`,`image` FROM users WHERE `email`= ? AND `password`= ?";
 
     result = await query(q, [email, hash]);
 
@@ -60,6 +60,7 @@ export const register = asyncHandler(async (req, res) => {
           userId: result[0].userId,
           userName: result[0].userName,
           email: result[0].email,
+          image: result[0].image,
         },
       });
   } catch (error) {
@@ -77,7 +78,7 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   let q =
-    "SELECT `userId`,`userName`,`email`,`password` FROM users WHERE `email`= ?";
+    "SELECT `userId`,`userName`,`email`,`password`,`image` FROM users WHERE `email`= ?";
 
   let data = await query(q, [email]);
 
@@ -112,6 +113,7 @@ export const login = asyncHandler(async (req, res) => {
         userId: data[0].userId,
         userName: data[0].userName,
         email: data[0].email,
+        image: data[0].image,
       },
     });
 });
@@ -132,7 +134,8 @@ export const getLoginStatus = asyncHandler(async (req, res) => {
   }
 
   if (verified.userId) {
-    let q = "SELECT `userId`, `userName`,`email` FROM users WHERE `userId`= ?";
+    let q =
+      "SELECT `userId`, `userName`,`email`,`image` FROM users WHERE `userId`= ?";
 
     let userInfo = await query(q, [verified.userId]);
 

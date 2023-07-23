@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import menuImage from "../assets/images/menu.png";
 
 const Login = () => {
   const [email, setEmail] = useState("farukspahictz@gmail.com");
@@ -47,7 +48,7 @@ const Login = () => {
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh]">
       <div className="flex flex-col items-center">
-        <img src="/images/menu.png" className="w-[7rem]" alt="" />
+        <img src={menuImage} className="w-[7rem]" alt="" />
 
         <div className="flex items-center">
           <span className="text-2xl">Ludo</span>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdPersonSearch } from "react-icons/md";
 import { BsPeopleFill } from "react-icons/bs";
 import { MdLeaderboard } from "react-icons/md";
@@ -13,8 +13,27 @@ import FindMatch from "../modals/FindMatch";
 import Leaderboard from "../modals/Leaderboard";
 import { AuthContext } from "../context/AuthContext";
 import { BiImageAdd } from "react-icons/bi";
+import ChangePhoto from "../modals/ChangePhoto";
+import menuImage from "../assets/images/menu.png";
+import { parse } from "path";
+const defaultImage = require("../assets/images/default.png");
+const custom = require("../assets/images/custom.png");
+const custom1 = require("../assets/images/custom1.png");
+const custom2 = require("../assets/images/custom2.png");
+const custom3 = require("../assets/images/custom3.png");
+const custom4 = require("../assets/images/custom4.png");
+const custom5 = require("../assets/images/custom5.png");
 
 const Menu = () => {
+  const avatars = [
+    defaultImage,
+    custom,
+    custom1,
+    custom2,
+    custom3,
+    custom4,
+    custom5,
+  ];
   const [openChangePhoto, setOpenChangePhoto] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
@@ -35,6 +54,8 @@ const Menu = () => {
     }
   };
 
+  console.log(loggedUserInfo);
+
   return (
     <section className="h-[100vh]">
       <div className="fixed flex justify-between w-full p-2">
@@ -44,9 +65,9 @@ const Menu = () => {
           className="relative flex flex-col space-y-2"
         >
           <img
-            src={loggedUserInfo?.image || "/images/custom.png"}
+            src={avatars[loggedUserInfo?.image!]}
             alt=""
-            className="w-20 h-20 border border-black rounded-md"
+            className="w-20 h-20 p-1 border border-black rounded-md"
           />
 
           <div className="flex items-center justify-center font-bold text-white bg-red-500 border border-black rounded-md">
@@ -57,7 +78,10 @@ const Menu = () => {
 
           {isHovering && (
             <button
-              onClick={() => setOpenChangePhoto(true)}
+              onClick={() => {
+                playSound(clickSound);
+                setOpenChangePhoto(true);
+              }}
               className="absolute top-0 p-1 text-white bg-red-500 border border-black rounded-full hover:bg-red-400 right-[-1rem]"
             >
               <BiImageAdd size={22} />
@@ -75,7 +99,7 @@ const Menu = () => {
 
       <div className="flex flex-col items-center justify-center h-full space-y-10">
         <div className="flex flex-col items-center">
-          <img src="/images/menu.png" className="w-[7rem]" alt="" />
+          <img src={menuImage} className="w-[7rem]" alt="" />
           <div className="flex items-center">
             <span className="text-2xl">Ludo</span>
             <span className="text-4xl text-red-500">GAME</span>
@@ -131,7 +155,9 @@ const Menu = () => {
       {openLeaderboard && (
         <Leaderboard setOpenLeaderboard={setOpenLeaderboard} />
       )}
-      {openChangePhoto && <}
+      {openChangePhoto && (
+        <ChangePhoto setOpenChangePhoto={setOpenChangePhoto} />
+      )}
     </section>
   );
 };
