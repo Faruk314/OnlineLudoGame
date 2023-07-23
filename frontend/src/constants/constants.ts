@@ -1,3 +1,8 @@
+import redPawnImage from "../assets/images/redPawn.png";
+import greenPawnImage from "../assets/images/greenPawn.png";
+import bluePawnImage from "../assets/images/bluePawn.png";
+import yellowPawnImage from "../assets/images/yellowPawn.png";
+
 const onChangeSound = "/sounds/click.wav";
 const clickSound = "/sounds/click2.mp3";
 const diceRoll = "/sounds/diceRoll.mp3";
@@ -82,19 +87,19 @@ function findPath(
 const pawns = [
   {
     color: "red",
-    url: "/images/redPawn.png",
+    url: redPawnImage,
   },
   {
     color: "green",
-    url: "/images/greenPawn.png",
+    url: greenPawnImage,
   },
   {
     color: "blue",
-    url: "/images/bluePawn.png",
+    url: bluePawnImage,
   },
   {
     color: "yellow",
-    url: "/images/yellowPawn.png",
+    url: yellowPawnImage,
   },
 ];
 

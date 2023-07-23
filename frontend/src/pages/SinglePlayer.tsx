@@ -24,9 +24,9 @@ const SinglePlayer = () => {
 
   return (
     <section className="flex items-center justify-center h-[100vh]">
-      <span className="fixed top-2">{`player turn ${
+      <span className="fixed top-2">{`player ${
         currentPlayerTurnIndex! + 1
-      }`}</span>
+      } turn`}</span>
       <span className="fixed text-2xl text-blue-500">{randomNum}</span>
       <div className="relative flex justify-center items-center h-[700px]">
         {players.map((player, index) => (

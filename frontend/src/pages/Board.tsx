@@ -33,13 +33,9 @@ const Board = () => {
   return (
     <div className="board">
       {cells.map((cell, index) => {
-        const hasPawnOnCell = players.some((player) =>
+        const pawn = players.find((player) =>
           player.pawnPositions.includes(cell + 1)
         );
-
-        const pawnColor = players.find((player) =>
-          player.pawnPositions.includes(cell + 1)
-        )?.color;
 
         const isHighlighted = highlightedPawns.includes(cell + 1);
 
@@ -72,21 +68,24 @@ const Board = () => {
               <AiFillStar className="absolute text-gray-300 md:text-2xl" />
             )}
 
-            {hasPawnOnCell && (
-              <div
-                onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
-                className={classNames(
-                  "absolute pawnSize border border-black rounded-full",
-                  {
-                    "bg-red-400": pawnColor === "red",
-                    "bg-blue-400": pawnColor === "blue",
-                    "bg-green-400": pawnColor === "green",
-                    "bg-yellow-400": pawnColor === "yellow",
-                    "border-4 border-black cursor-pointer": isHighlighted,
-                  }
-                )}
-              ></div>
-            )}
+            <div className="absolute">
+              {pawn && (
+                <div
+                  onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
+                  className={classNames(
+                    "pawnSize border border-black rounded-full",
+                    {
+                      "bg-red-400": pawn?.color === "red",
+                      "bg-blue-400": pawn?.color === "blue",
+                      "bg-green-400": pawn?.color === "green",
+                      "bg-yellow-400": pawn?.color === "yellow",
+                      "border-4 border-black cursor-pointer": isHighlighted,
+                    }
+                  )}
+                ></div>
+              )}
+            </div>
+
             {/* {cell + 1} */}
           </div>
         );
