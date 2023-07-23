@@ -98,7 +98,7 @@ export const getMultiplayerGameState = asyncHandler(async (req, res) => {
 
     if (playerId[i] !== null) {
       let playerInfoQuery =
-        "SELECT u.userName, u.userId FROM users u WHERE u.userId = ?";
+        "SELECT u.userName, u.userId, u.image FROM users u WHERE u.userId = ?";
       let playerData = await query(playerInfoQuery, [playerId[i]]);
 
       playersData.push(playerData[0]);
@@ -111,6 +111,7 @@ export const getMultiplayerGameState = asyncHandler(async (req, res) => {
   gameState.players.forEach((player, index) => {
     if (playersData[index].userId === player.userId) {
       player.userName = playersData[index].userName;
+      player.image = playersData[index].image;
     }
   });
 

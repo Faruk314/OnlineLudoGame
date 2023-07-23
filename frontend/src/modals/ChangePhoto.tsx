@@ -1,19 +1,21 @@
 import axios from "axios";
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import custom from "../assets/images/custom.png";
 import custom1 from "../assets/images/custom1.png";
 import custom2 from "../assets/images/custom2.png";
 import custom3 from "../assets/images/custom3.png";
 import custom4 from "../assets/images/custom4.png";
 import custom5 from "../assets/images/custom.png";
+import { AuthContext } from "../context/AuthContext";
 
 interface Props {
   setOpenChangePhoto: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChangePhoto = ({ setOpenChangePhoto }: Props) => {
-  const [chosenPhoto, setChosenPhoto] = useState<number | null>(0);
+  const { setLoggedUserInfo } = useContext(AuthContext);
+  const [chosenPhoto, setChosenPhoto] = useState<number | null>(null);
   const avatars = [custom, custom1, custom2, custom3, custom4, custom5];
 
   const updateAvatar = async () => {
@@ -21,12 +23,15 @@ const ChangePhoto = ({ setOpenChangePhoto }: Props) => {
       await axios.post("http://localhost:5000/api/users/changeAvatar", {
         avatar: chosenPhoto,
       });
+
+      setLoggedUserInfo((prev: any) => ({
+        ...prev,
+        image: chosenPhoto,
+      }));
     } catch (error) {
       console.log(error);
     }
   };
-
-  console.log(chosenPhoto);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-center text-center bg-[rgb(0,0,0,0.5)]">

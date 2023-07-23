@@ -16,6 +16,7 @@ export class Player {
   endpoint: number | null = null;
   userId: number | null = null;
   userName: string | null = null;
+  image: number | null = null;
 
   constructor({ color }: IPlayer) {
     if (!this.color) {

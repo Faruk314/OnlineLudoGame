@@ -10,6 +10,7 @@ export class Player {
   endpoint = null;
   userId = null;
   userName = null;
+  image = null;
 
   constructor({ color, userId }) {
     if (userId) {

@@ -15,7 +15,6 @@ import { AuthContext } from "../context/AuthContext";
 import { BiImageAdd } from "react-icons/bi";
 import ChangePhoto from "../modals/ChangePhoto";
 import menuImage from "../assets/images/menu.png";
-import { parse } from "path";
 const defaultImage = require("../assets/images/default.png");
 const custom = require("../assets/images/custom.png");
 const custom1 = require("../assets/images/custom1.png");
@@ -25,15 +24,7 @@ const custom4 = require("../assets/images/custom4.png");
 const custom5 = require("../assets/images/custom5.png");
 
 const Menu = () => {
-  const avatars = [
-    defaultImage,
-    custom,
-    custom1,
-    custom2,
-    custom3,
-    custom4,
-    custom5,
-  ];
+  const avatars = [custom, custom1, custom2, custom3, custom4, custom5];
   const [openChangePhoto, setOpenChangePhoto] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
@@ -54,8 +45,6 @@ const Menu = () => {
     }
   };
 
-  console.log(loggedUserInfo);
-
   return (
     <section className="h-[100vh]">
       <div className="fixed flex justify-between w-full p-2">
@@ -65,7 +54,7 @@ const Menu = () => {
           className="relative flex flex-col space-y-2"
         >
           <img
-            src={avatars[loggedUserInfo?.image!]}
+            src={avatars[loggedUserInfo?.image!] || defaultImage}
             alt=""
             className="w-20 h-20 p-1 border border-black rounded-md"
           />
