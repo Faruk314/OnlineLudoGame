@@ -77,6 +77,17 @@ export const updateGameState = asyncHandler(async (req, res) => {
   }
 });
 
+export const deleteGameState = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    await client.del(userId);
+    res.status(200).json("Game state deleted");
+  } catch (error) {
+    res.status(400).json("Could not delete game state");
+  }
+});
+
 export const getMultiplayerGameState = asyncHandler(async (req, res) => {
   const userId = 2;
 

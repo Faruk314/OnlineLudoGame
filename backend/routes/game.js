@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteGameState,
   getMultiplayerGameState,
   initGame,
   retrieveGameState,
@@ -16,5 +17,7 @@ router.get("/retrieveGameState", protect, retrieveGameState);
 router.post("/updateGameState", protect, updateGameState);
 
 router.post("/getMultiplayerGameState", protect, getMultiplayerGameState);
+
+router.delete("/deleteGameState", protect, deleteGameState);
 
 export default router;

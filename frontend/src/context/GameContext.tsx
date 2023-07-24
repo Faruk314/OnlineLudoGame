@@ -33,6 +33,7 @@ interface GameContextProps {
   gameId: string | null;
   retrieveMultiplayerGameStats: () => Promise<void>;
   updateGameState: (gameState: GameState) => void;
+  deleteGameState: () => Promise<void>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -55,6 +56,7 @@ export const GameContext = createContext<GameContextProps>({
   gameId: null,
   setGameId: () => {},
   retrieveMultiplayerGameStats: async () => {},
+  deleteGameState: async () => {},
   updateGameState: (gameState) => {},
 });
 
@@ -180,6 +182,28 @@ export const GameContextProvider = ({ children }: any) => {
     playerTurns,
     gameStarted,
   ]);
+
+  const resetGameStates = () => {
+    setGameId(null);
+    setPlayerTurns([]);
+    setHighlightedPawns([]);
+    setGameOver(false);
+    setPlayers([]);
+    setCurrentPlayerTurnIndex(null);
+    setChosenColors([]);
+    setChosenPlayers(0);
+    setRandomNum(null);
+  };
+
+  const deleteGameState = async () => {
+    try {
+      await axios.delete("http://localhost:5000/api/game/deleteGameState");
+
+      resetGameStates();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const higlightPawns = (randomNum: number) => {
     const playerOnMove = players[currentPlayerTurnIndex!];
@@ -356,6 +380,7 @@ export const GameContextProvider = ({ children }: any) => {
 
   const contextValue: GameContextProps = {
     gameId,
+    deleteGameState,
     retrieveMultiplayerGameStats,
     updateGameState,
     setGameId,
