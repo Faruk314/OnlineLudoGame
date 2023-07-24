@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { MdPersonSearch } from "react-icons/md";
 import { BsPeopleFill } from "react-icons/bs";
 import { MdLeaderboard } from "react-icons/md";
 import { ImExit } from "react-icons/im";
-import { ImVolumeMute, ImVolumeMute2 } from "react-icons/im";
 import Local from "../modals/Local";
 import { SoundContext } from "../context/SoundContext";
 import { clickSound } from "../constants/constants";
@@ -15,6 +14,7 @@ import { AuthContext } from "../context/AuthContext";
 import { BiImageAdd } from "react-icons/bi";
 import ChangePhoto from "../modals/ChangePhoto";
 import menuImage from "../assets/images/menu.png";
+import SoundButton from "../components/SoundButton";
 const defaultImage = require("../assets/images/default.png");
 const custom = require("../assets/images/custom.png");
 const custom1 = require("../assets/images/custom1.png");
@@ -31,8 +31,7 @@ const Menu = () => {
   const [openFindMatch, setOpenFindMatch] = useState(false);
   const [openLocal, setOpenLocal] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
-  const { isSoundEnabled, setIsSoundEnabled, playSound } =
-    useContext(SoundContext);
+  const { playSound } = useContext(SoundContext);
   const { loggedUserInfo } = useContext(AuthContext);
 
   const logoutHandler = async () => {
@@ -77,13 +76,7 @@ const Menu = () => {
             </button>
           )}
         </div>
-        <button
-          onClick={() => setIsSoundEnabled((prev) => !prev)}
-          className="flex items-center justify-center w-[2rem] h-[2rem] border border-black bg-red-500 rounded-md"
-        >
-          {isSoundEnabled && <ImVolumeMute className="w-full text-white" />}
-          {!isSoundEnabled && <ImVolumeMute2 className="w-full text-white" />}
-        </button>
+        <SoundButton />
       </div>
 
       <div className="flex flex-col items-center justify-center h-full space-y-10">

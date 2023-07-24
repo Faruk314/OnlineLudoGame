@@ -15,6 +15,8 @@ import custom3 from "../assets/images/custom3.png";
 import custom4 from "../assets/images/custom4.png";
 import custom5 from "../assets/images/custom.png";
 import { AuthContext } from "../context/AuthContext";
+import SoundButton from "../components/SoundButton";
+import Exit from "../components/Exit";
 
 const Multiplayer = () => {
   const {
@@ -72,12 +74,19 @@ const Multiplayer = () => {
   }
 
   return (
-    <section className="flex items-center justify-center h-[100vh]">
-      <span className="fixed top-2">{`player turn ${
-        players[currentPlayerTurnIndex!].userName
-      }`}</span>
+    <section className="flex items-center justify-center h-[100vh] z-20">
+      <div className="fixed top-0 flex justify-between w-full p-2">
+        <div></div>
+        <span className="">{`${
+          players[currentPlayerTurnIndex!].userName
+        } turn`}</span>
+        <div className="flex items-center space-x-2">
+          <SoundButton />
+          <Exit />
+        </div>
+      </div>
 
-      <span className="fixed text-2xl text-blue-500">{randomNum}</span>
+      <span className="fixed z-[-1] text-2xl text-blue-500">{randomNum}</span>
       <div className="relative flex justify-center items-center h-[700px]">
         {players.map((player, index) => (
           <div
@@ -108,7 +117,7 @@ const Multiplayer = () => {
                       playSound(diceRoll);
                       handleDiceThrow();
                     }}
-                    className="p-2 text-white bg-red-500 hover:bg-red-400 disabled:bg-gray-400"
+                    className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600 disabled:bg-gray-400"
                   >
                     Throw
                   </button>

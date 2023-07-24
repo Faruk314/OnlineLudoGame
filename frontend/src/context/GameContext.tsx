@@ -278,7 +278,7 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handlePlayerMove = (pawnIndex: number) => {
-    console.log(gameId);
+    playSound(move);
 
     if (gameId) {
       console.log("uslo u handle player move frontend");
@@ -288,7 +288,6 @@ export const GameContextProvider = ({ children }: any) => {
 
     const updatedPlayers = [...players];
     const playerOnMove = players[currentPlayerTurnIndex!];
-    playSound(move);
 
     //find that position in positions array and change it
     const positionIndex = playerOnMove.pawnPositions.findIndex(
