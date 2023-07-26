@@ -43,7 +43,7 @@ const Multiplayer = () => {
     if (isLoading) {
       fetchGameData();
     }
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     socket?.on("diceRolled", (gameState: GameState) => {
