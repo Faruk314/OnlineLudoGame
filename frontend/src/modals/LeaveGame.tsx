@@ -1,17 +1,23 @@
 import React, { useContext } from "react";
 import { GameContext } from "../context/GameContext";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/SocketContext";
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LeaveGame = ({ setOpenModal }: Props) => {
-  const { deleteGameState } = useContext(GameContext);
+  const { deleteGameState, gameId } = useContext(GameContext);
   const navigate = useNavigate();
+  const { socket } = useContext(SocketContext);
 
   const leaveGameHandler = async () => {
     try {
+      if (gameId) {
+        socket?.emit("leaveGame", gameId);
+      }
+
       await deleteGameState();
       navigate("/menu");
     } catch (error) {

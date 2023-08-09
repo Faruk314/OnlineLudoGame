@@ -202,6 +202,20 @@ export default function setupSocket() {
         ...gameState,
       });
     });
+
+    socket.on("leaveGame", async (gameId) => {
+      try {
+        let q = "DELETE FROM games WHERE `gameId`= ?";
+
+        await query(q, [gameId]);
+        await client.del(gameId);
+      } catch (error) {
+        throw new Error("could not delete game state");
+      }
+      socket.leave(gameId);
+
+      io.to(gameId).emit("opponentLeft");
+    });
   });
 
   io.listen(5001);

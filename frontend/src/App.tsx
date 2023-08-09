@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Menu from "./pages/Menu";
 import SinglePlayer from "./pages/SinglePlayer";
@@ -9,6 +9,7 @@ import { AuthContext } from "./context/AuthContext";
 import Multiplayer from "./pages/Multiplayer";
 import { SocketContext } from "./context/SocketContext";
 import { GameContext } from "./context/GameContext";
+import OpponentLeft from "./modals/OpponentLeft";
 
 axios.defaults.withCredentials = true;
 
@@ -18,6 +19,7 @@ function App() {
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
   const { gameId } = useContext(GameContext);
+  const [openOpponentLeft, setOpenOpponentLeft] = useState(false);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -55,7 +57,16 @@ function App() {
     };
   }, [socket, navigate]);
 
-  console.log(isLoggedIn, "app");
+  useEffect(() => {
+    socket?.on("opponentLeft", () => {
+      setOpenOpponentLeft(true);
+      navigate("/menu");
+    });
+
+    return () => {
+      socket?.off("opponentLeft");
+    };
+  }, [socket, navigate]);
 
   return (
     <div className="font-bold">
@@ -66,6 +77,10 @@ function App() {
         <Route path="/local" element={<SinglePlayer />} />
         <Route path="/multiplayer" element={<Multiplayer />} />
       </Routes>
+
+      {openOpponentLeft && (
+        <OpponentLeft setOpenOpponentLeft={setOpenOpponentLeft} />
+      )}
     </div>
   );
 }
