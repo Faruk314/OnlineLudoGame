@@ -9,7 +9,7 @@ const Exit = () => {
     <div className="">
       <button
         onClick={() => setOpenLeaveModal(true)}
-        className="w-[2rem] h-[2rem] bg-red-500 hover:bg-red-600 border border-black flex justify-center items-center text-white rounded-md"
+        className="w-[2rem] h-[2rem] bg-red-500 hover:bg-red-600 flex justify-center items-center text-white rounded-md"
       >
         <ImExit />
       </button>

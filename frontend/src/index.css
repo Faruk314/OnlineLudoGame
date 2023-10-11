@@ -46,6 +46,19 @@
   animation: spin 1s linear infinite;
 }
 
+@keyframes point {
+  0% {
+    transform: translateX(0.4rem);
+  }
+  100% {
+    transform: translateX(-0.4rem);
+  }
+}
+
+.point-animation {
+  animation: point infinite 1000ms;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -53,4 +66,33 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.dice {
+  background-color: #ccc;
+  box-shadow: 1.5px 1.5px 2px;
+  border-radius: 20%;
+  padding: 3px;
+}
+
+.dice > div {
+  padding: 1.2px;
+}
+
+.dice > div > div {
+  width: 5px;
+  height: 5px;
+  margin: auto;
+  box-shadow: 0.5px 0.5px 1px #000;
+}
+
+.dice.dice-animation {
+  animation: dice-rotate 500ms;
+}
+
+.diceDot {
+  background-color: black;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 100%;
 }

@@ -17,6 +17,7 @@ import custom5 from "../assets/images/custom.png";
 import { AuthContext } from "../context/AuthContext";
 import SoundButton from "../components/SoundButton";
 import Exit from "../components/Exit";
+import Dice from "../components/Dice";
 
 const Multiplayer = () => {
   const {
@@ -77,38 +78,45 @@ const Multiplayer = () => {
     <section className="flex items-center justify-center h-[100vh] z-20">
       <div className="fixed top-0 flex justify-between w-full p-2">
         <div></div>
-        <span className="">{`${
-          players[currentPlayerTurnIndex!].userName
-        } turn`}</span>
+
         <div className="flex items-center space-x-2">
           <SoundButton />
           <Exit />
         </div>
       </div>
 
-      <span className="fixed z-[-1] text-2xl text-blue-500">{randomNum}</span>
       <div className="relative flex justify-center items-center h-[700px]">
         {players.map((player, index) => (
           <div
             key={player.color}
             className={classNames("flex flex-col items-center", {
-              "absolute top-0 md:top-[-3rem] lg:top-[-5rem] left-0":
+              "absolute top-0 md:top-[-3rem] lg:top-[-2rem] left-0":
                 player.color === "red",
               "absolute top-0 md:top-[-3rem] lg:top-[-5rem] right-0":
                 player.color === "green",
-              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-5rem] left-0":
+              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-2rem] left-0":
                 player.color === "blue",
-              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-5rem] right-0":
+              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-2rem] right-0":
                 player.color === "yellow",
             })}
           >
-            <div className="flex items-center justify-center h-20 border border-black rounded-md">
-              <img src={avatars[player.image!]} alt="" className="h-full p-1" />
+            <div className="flex items-center h-20 space-x-4 rounded-md">
+              <div className="flex flex-col items-center">
+                <div className="border-2 border-black rounded-md">
+                  <img
+                    src={avatars[player.image!]}
+                    alt=""
+                    className="h-[5rem] p-1"
+                  />
+                </div>
+
+                <span className="">{player.userName}</span>
+              </div>
+
+              <Dice index={index} />
             </div>
 
-            <div className="">{player.userName}</div>
-
-            {players[currentPlayerTurnIndex!].userId ===
+            {/* {players[currentPlayerTurnIndex!].userId ===
               loggedUserInfo?.userId &&
               currentPlayerTurnIndex === index && (
                 <div className="flex items-center space-x-2">
@@ -122,7 +130,7 @@ const Multiplayer = () => {
                     Throw
                   </button>
                 </div>
-              )}
+              )} */}
           </div>
         ))}
 

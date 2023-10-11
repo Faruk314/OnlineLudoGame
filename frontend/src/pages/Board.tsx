@@ -10,11 +10,22 @@ import {
 } from "../constants/constants";
 import { GameContext } from "../context/GameContext";
 import { AiFillStar } from "react-icons/ai";
+import redPawn from "../assets/images/redPawn.png";
+import yellowPawn from "../assets/images/yellowPawn.png";
+import greenPawn from "../assets/images/greenPawn.png";
+import bluePawn from "../assets/images/bluePawn.png";
+import { AuthContext } from "../context/AuthContext";
 
 const Board = () => {
   const [cells, setCells] = useState<number[]>([]);
-  const { players, highlightedPawns, handlePlayerMove } =
-    useContext(GameContext);
+  const {
+    players,
+    highlightedPawns,
+    handlePlayerMove,
+    currentPlayerTurnIndex,
+    gameId,
+  } = useContext(GameContext);
+  const { loggedUserInfo } = useContext(AuthContext);
 
   useEffect(() => {
     const createGrid = () => {
@@ -40,6 +51,15 @@ const Board = () => {
         const isHighlighted = highlightedPawns.includes(cell + 1);
 
         const isSafeZone = safeZones.includes(cell + 1);
+
+        let isEnemyTurn = false;
+
+        if (gameId) {
+          if (
+            players[currentPlayerTurnIndex!].userId !== loggedUserInfo?.userId
+          )
+            isEnemyTurn = true;
+        }
 
         return (
           <div
@@ -75,21 +95,45 @@ const Board = () => {
               <AiFillStar className="absolute text-gray-300 md:text-2xl" />
             )}
 
-            <div className="absolute">
-              {pawn && (
-                <div
-                  onClick={() => isHighlighted && handlePlayerMove(cell + 1)}
-                  className={classNames(
-                    "pawnSize border border-black rounded-full",
-                    {
-                      "bg-red-400": pawn?.color === "red",
-                      "bg-blue-400": pawn?.color === "blue",
-                      "bg-green-400": pawn?.color === "green",
-                      "bg-yellow-400": pawn?.color === "yellow",
-                      "border-4 border-black cursor-pointer": isHighlighted,
-                    }
-                  )}
-                ></div>
+            <div
+              onClick={() =>
+                isHighlighted && !isEnemyTurn && handlePlayerMove(cell + 1)
+              }
+              className={classNames(
+                "absolute top-[-0.5rem] md:top-[-1rem] cursor-pointer z-20",
+                {
+                  "border-2 border-black rounded-full":
+                    isHighlighted && !isEnemyTurn,
+                }
+              )}
+            >
+              {pawn?.color === "red" && (
+                <img
+                  className="h-[1.5rem] md:h-[2.5rem]"
+                  src={redPawn}
+                  alt=""
+                />
+              )}
+              {pawn?.color === "yellow" && (
+                <img
+                  className="h-[1.5rem] md:h-[2.5rem]"
+                  src={yellowPawn}
+                  alt=""
+                />
+              )}
+              {pawn?.color === "blue" && (
+                <img
+                  className="h-[1.5rem] md:h-[2.5rem]"
+                  src={bluePawn}
+                  alt=""
+                />
+              )}
+              {pawn?.color === "green" && (
+                <img
+                  className=" h-[1.5rem] md:h-[2.5rem]"
+                  src={greenPawn}
+                  alt=""
+                />
               )}
             </div>
 
