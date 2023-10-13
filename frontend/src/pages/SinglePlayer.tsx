@@ -47,10 +47,10 @@ const SinglePlayer = () => {
             <div
               key={player.color}
               className={classNames("flex items-center space-x-4", {
-                "absolute top-0 left-0": red,
-                "absolute top-0 right-0": green,
-                "absolute bottom-0 left-0": blue,
-                "absolute bottom-0 right-0": yellow,
+                "absolute top-[-1.5rem] left-0": red,
+                "absolute top-[-1.5rem] right-0": green,
+                "absolute bottom-[-1.5rem] left-0": blue,
+                "absolute bottom-[-1.5rem] right-0": yellow,
               })}
             >
               {red && (

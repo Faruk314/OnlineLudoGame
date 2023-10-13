@@ -5,35 +5,35 @@
 .board {
   display: grid;
   grid-template-columns: repeat(15, 40px);
-  height: 550px;
+  grid-template-rows: repeat(15, 40px);
 }
 
-.pawnSize {
-  height: 1.7rem;
-  width: 1.7rem;
+.pawn-image {
+  position: relative;
+  top: -1rem;
+  right: calc(50% - 0.7rem);
+  width: 1.5rem; /* Adjust width as needed */
+  height: 2.5rem; /* Adjust height as needed */
 }
 
 @media (max-width: 1000px) {
   .board {
-    grid-template-columns: repeat(15, 35px);
-    height: 500px;
-  }
-
-  .pawnSize {
-    height: 1.5rem;
-    width: 1.5rem;
+    grid-template-columns: repeat(15, 30px);
+    grid-template-rows: repeat(15, 30px);
   }
 }
 
 @media (max-width: 750px) {
   .board {
-    grid-template-columns: repeat(15, 22px);
-    height: 400px;
+    grid-template-columns: repeat(15, 22.5px);
+    grid-template-rows: repeat(15, 25px);
   }
 
-  .pawnSize {
-    height: 1rem;
+  .pawn-image {
     width: 1rem;
+    height: 1.2rem;
+    top: 0;
+    right: 0;
   }
 }
 

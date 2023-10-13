@@ -41,15 +41,22 @@ const Board = () => {
     createGrid();
   }, []);
 
+  let pawns: any = [];
+
+  players.forEach((player) => {
+    const pawnPositions = player.pawnPositions;
+    const color = player.color;
+
+    pawnPositions.forEach((pawnPosition) =>
+      pawns.push({ color, pawnPosition })
+    );
+  });
+
+  console.log(pawns, "pawns");
+
   return (
     <div className="board">
       {cells.map((cell, index) => {
-        const pawn = players.find((player) =>
-          player.pawnPositions.includes(cell + 1)
-        );
-
-        const isHighlighted = highlightedPawns.includes(cell + 1);
-
         const isSafeZone = safeZones.includes(cell + 1);
 
         let isEnemyTurn = false;
@@ -95,7 +102,81 @@ const Board = () => {
               <AiFillStar className="absolute text-gray-300 md:text-2xl" />
             )}
 
-            <div
+            <div className="absolute grid grid-cols-2">
+              {pawns.map((pawn: any, index: number) => {
+                let isHighlighted = highlightedPawns.includes(
+                  pawn.pawnPosition
+                );
+                const currentPlayerColor =
+                  players[currentPlayerTurnIndex!].color;
+
+                if (pawn.pawnPosition === cell + 1) {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        isHighlighted &&
+                        !isEnemyTurn &&
+                        handlePlayerMove(cell + 1)
+                      }
+                      className={classNames("cursor-pointer  z-20", {})}
+                    >
+                      {pawn.color === "red" && (
+                        <img
+                          className={classNames("pawn-image", {
+                            "border-2 border-black rounded-full":
+                              isHighlighted &&
+                              !isEnemyTurn &&
+                              currentPlayerColor === "red",
+                          })}
+                          src={redPawn}
+                          alt=""
+                        />
+                      )}
+                      {pawn.color === "yellow" && (
+                        <img
+                          className={classNames("pawn-image", {
+                            "border-2 border-black rounded-full":
+                              isHighlighted &&
+                              !isEnemyTurn &&
+                              currentPlayerColor === "yellow",
+                          })}
+                          src={yellowPawn}
+                          alt=""
+                        />
+                      )}
+                      {pawn.color === "blue" && (
+                        <img
+                          className={classNames("pawn-image", {
+                            "border-2 border-black rounded-full":
+                              isHighlighted &&
+                              !isEnemyTurn &&
+                              currentPlayerColor === "blue",
+                          })}
+                          src={bluePawn}
+                          alt=""
+                        />
+                      )}
+                      {pawn.color === "green" && (
+                        <img
+                          className={classNames("pawn-image", {
+                            "border-2 border-black rounded-full":
+                              isHighlighted &&
+                              !isEnemyTurn &&
+                              currentPlayerColor === "green",
+                          })}
+                          src={greenPawn}
+                          alt=""
+                        />
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            {/* <div
               onClick={() =>
                 isHighlighted && !isEnemyTurn && handlePlayerMove(cell + 1)
               }
@@ -135,7 +216,7 @@ const Board = () => {
                   alt=""
                 />
               )}
-            </div>
+            </div> */}
 
             {/* {cell + 1} */}
           </div>
