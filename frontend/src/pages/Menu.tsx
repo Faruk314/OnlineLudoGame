@@ -15,6 +15,7 @@ import { BiImageAdd } from "react-icons/bi";
 import ChangePhoto from "../modals/ChangePhoto";
 import menuImage from "../assets/images/menu.png";
 import SoundButton from "../components/SoundButton";
+import { SocketContext } from "../context/SocketContext";
 const defaultImage = require("../assets/images/default.png");
 const custom = require("../assets/images/custom.png");
 const custom1 = require("../assets/images/custom1.png");
@@ -33,6 +34,7 @@ const Menu = () => {
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { playSound } = useContext(SoundContext);
   const { loggedUserInfo } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   const logoutHandler = async () => {
     try {
@@ -102,6 +104,7 @@ const Menu = () => {
           <button
             onClick={() => {
               playSound(clickSound);
+              socket?.emit("findMatch");
               setOpenFindMatch(true);
             }}
             className="px-5 flex flex-col justify-between hover:bg-gray-100 items-center py-2 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] h-[5rem]"

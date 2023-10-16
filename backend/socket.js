@@ -111,20 +111,10 @@ export default function setupSocket() {
       }
     });
 
-    socket.on("cancelFindMatch", (playersNumber) => {
-      if (playersNumber !== 2 && playersNumber !== 4) {
-        return console.log("Invalid players number");
-      }
-
-      if (playersNumber === 2) {
-        twoPlayersQueue = twoPlayersQueue.filter(
-          (userId) => userId !== socket.userId
-        );
-      } else {
-        fourPlayerQueue = fourPlayerQueue.filter(
-          (userId) => userId !== socket.userId
-        );
-      }
+    socket.on("cancelFindMatch", () => {
+      twoPlayersQueue = twoPlayersQueue.filter(
+        (userId) => userId !== socket.userId
+      );
     });
 
     socket.on("diceRoll", async (gameId) => {
