@@ -11,6 +11,8 @@ import { SocketContext } from "./context/SocketContext";
 import { GameContext } from "./context/GameContext";
 import OpponentLeft from "./modals/OpponentLeft";
 import Loader from "./components/Loader";
+import ProtectedAuthPages from "./protection/ProtectedAuthPages";
+import ProtectedRoutes from "./protection/ProtectedRoutes";
 
 axios.defaults.withCredentials = true;
 
@@ -79,11 +81,15 @@ function App() {
   return (
     <div className="font-bold">
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/local/:gameId" element={<SinglePlayer />} />
-        <Route path="/multiplayer/:gameId" element={<Multiplayer />} />
+        <Route element={<ProtectedAuthPages />}>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/local/:gameId" element={<SinglePlayer />} />
+          <Route path="/multiplayer/:gameId" element={<Multiplayer />} />
+        </Route>
       </Routes>
 
       {openOpponentLeft && (
