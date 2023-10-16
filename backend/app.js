@@ -26,6 +26,8 @@ app.use(
 export const client = new Redis({
   host: "localhost",
   port: 6379,
+  username: "default",
+  password: "ispitivac",
 });
 
 app.use(express.json());

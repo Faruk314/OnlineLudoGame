@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GameContext } from "../context/GameContext";
 import { SoundContext } from "../context/SoundContext";
 import GameOver from "../modals/GameOver";
@@ -11,21 +11,34 @@ import redPawn from "../assets/images/redPawn.png";
 import yellowPawn from "../assets/images/yellowPawn.png";
 import greenPawn from "../assets/images/greenPawn.png";
 import bluePawn from "../assets/images/bluePawn.png";
+import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const SinglePlayer = () => {
-  const {
-    players,
-    randomNum,
-    currentPlayerTurnIndex,
-    isGameOver,
-    retrieveGameStatus,
-    highlightedPawns,
-  } = useContext(GameContext);
-  const { playSound } = useContext(SoundContext);
+  const { players, isGameOver, retrieveGameState } = useContext(GameContext);
+  const { gameId } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    retrieveGameStatus();
-  }, []);
+    const getGameState = async () => {
+      const gameStateFetched = await retrieveGameState(gameId!);
+
+      if (!gameStateFetched) {
+        navigate("/menu");
+      }
+
+      setLoading(false);
+    };
+
+    if (loading) {
+      getGameState();
+    }
+  }, [gameId, loading, navigate, retrieveGameState]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <section className="flex items-center justify-center h-[100vh]">

@@ -17,8 +17,7 @@ interface GameContextProps {
   players: Player[];
   currentPlayerTurnIndex: null | number;
   highlightedPawns: number[];
-  initGame: () => Promise<void>;
-  retrieveGameStatus: () => Promise<void>;
+  initGame: () => Promise<string | null | undefined>;
   higlightPawns: (randomNum: number) => number[];
   handleDiceThrow: () => void;
   handlePlayerMove: (pawnIndex: number) => void;
@@ -31,9 +30,9 @@ interface GameContextProps {
   chosenColors: string[];
   chosenPlayers: number;
   gameId: string | null;
-  retrieveMultiplayerGameStats: () => Promise<void>;
+  retrieveGameState: (gameId: string) => Promise<boolean>;
   updateGameState: (gameState: GameState) => void;
-  deleteGameState: () => Promise<void>;
+  deleteGameState: (gameId: string) => Promise<void>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -41,8 +40,7 @@ export const GameContext = createContext<GameContextProps>({
   players: [],
   currentPlayerTurnIndex: null,
   highlightedPawns: [],
-  initGame: async () => {},
-  retrieveGameStatus: async () => {},
+  initGame: async () => null,
   higlightPawns: (randomNum) => [],
   handleDiceThrow: () => {},
   handlePlayerMove: (pawnIndex) => {},
@@ -55,14 +53,13 @@ export const GameContext = createContext<GameContextProps>({
   chosenPlayers: 0,
   gameId: null,
   setGameId: () => {},
-  retrieveMultiplayerGameStats: async () => {},
-  deleteGameState: async () => {},
+  retrieveGameState: async (gameId) => false,
+  deleteGameState: async (gameId) => {},
   updateGameState: (gameState) => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
   const [gameId, setGameId] = useState<string | null>(null);
-  const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setGameOver] = useState(false);
   const [chosenColors, setChosenColors] = useState<string[]>([]);
   const [playerTurns, setPlayerTurns] = useState<number[]>([]);
@@ -88,17 +85,19 @@ export const GameContextProvider = ({ children }: any) => {
     setRandomNum(gameState.randomNum);
   };
 
-  const retrieveMultiplayerGameStats = useCallback(async () => {
+  const retrieveGameState = useCallback(async (gameId: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/game/getMultiplayerGameState"
+        "http://localhost:5000/api/game/getGameState",
+        { gameId }
       );
 
-      console.log(response.data);
-      const gameState = response.data.gameState;
+      const gameState = response.data;
+
+      console.log(gameState, "gameState");
 
       updateGameState({
-        gameId: response.data.gameId,
+        gameId: gameState.gameId,
         playerTurns: gameState.playerTurns,
         highlightedPawns: gameState.highlightedPawns,
         isGameOver: gameState.isGameOver,
@@ -108,47 +107,60 @@ export const GameContextProvider = ({ children }: any) => {
         chosenPlayers: gameState.chosenPlayers,
         chosenColors: gameState.chosenColors,
       });
+
+      return true;
     } catch (error) {
       console.log(error);
+
+      return false;
     }
   }, []);
 
   const initGame = async () => {
     try {
-      await axios.post("http://localhost:5000/api/game/initGame", {
-        chosenplayersNum: chosenPlayers,
-        chosenColorsArr: chosenColors,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const retrieveGameStatus = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/game/retrieveGameState"
+      const response = await axios.post(
+        "http://localhost:5000/api/game/initGame",
+        {
+          chosenplayersNum: chosenPlayers,
+          chosenColorsArr: chosenColors,
+        }
       );
 
-      console.log(response.data);
+      if (response.data) {
+        setGameId(response.data);
 
-      setGameStarted(true);
-      setPlayers(response.data.players);
-      setCurrentPlayerTurnIndex(response.data.currentPlayerTurnIndex);
-      setHighlightedPawns(response.data.highlightedPawns);
-      setPlayerTurns(response.data.playerTurns);
-      setChosenPlayers(response.data.chosenPlayers);
-      setChosenColors(response.data.chosenColors);
-      setGameOver(response.data.isGameOver);
-      setRandomNum(response.data.randomNum);
+        return response.data;
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  // const retrieveGameStatus = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:5000/api/game/retrieveGameState"
+  //     );
+
+  //     console.log(response.data);
+
+  //     setPlayers(response.data.players);
+  //     setCurrentPlayerTurnIndex(response.data.currentPlayerTurnIndex);
+  //     setHighlightedPawns(response.data.highlightedPawns);
+  //     setPlayerTurns(response.data.playerTurns);
+  //     setChosenPlayers(response.data.chosenPlayers);
+  //     setChosenColors(response.data.chosenColors);
+  //     setGameOver(response.data.isGameOver);
+  //     setRandomNum(response.data.randomNum);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     const updateGameState = async () => {
       const game = {
+        gameId,
         isGameOver,
         chosenPlayers,
         chosenColors,
@@ -168,19 +180,15 @@ export const GameContextProvider = ({ children }: any) => {
       }
     };
 
-    if (gameStarted) {
-      updateGameState();
-    }
+    updateGameState();
   }, [
-    chosenColors,
-    chosenPlayers,
     currentPlayerTurnIndex,
     isGameOver,
     highlightedPawns,
     players,
     randomNum,
     playerTurns,
-    gameStarted,
+    gameId,
   ]);
 
   const resetGameStates = () => {
@@ -195,9 +203,11 @@ export const GameContextProvider = ({ children }: any) => {
     setRandomNum(null);
   };
 
-  const deleteGameState = async () => {
+  const deleteGameState = async (gameId: string) => {
     try {
-      await axios.delete("http://localhost:5000/api/game/deleteGameState");
+      await axios.delete(
+        `http://localhost:5000/api/game/deleteGameState/${gameId}`
+      );
 
       resetGameStates();
     } catch (error) {
@@ -251,7 +261,7 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handleDiceThrow = () => {
-    if (gameId) {
+    if (players[currentPlayerTurnIndex!].userId !== null) {
       console.log("uslo u dice throw");
       socket?.emit("diceRoll", gameId);
       return;
@@ -259,7 +269,11 @@ export const GameContextProvider = ({ children }: any) => {
 
     const randomNum = Math.floor(Math.random() * 6 + 1);
 
+    console.log(randomNum, "randomNum");
+
     const highlighted = higlightPawns(randomNum);
+
+    console.log(highlighted, "higligthed");
 
     if (highlighted.length > 0) {
       setHighlightedPawns(highlighted);
@@ -304,7 +318,7 @@ export const GameContextProvider = ({ children }: any) => {
   const handlePlayerMove = (pawnIndex: number) => {
     playSound(move);
 
-    if (gameId) {
+    if (players[currentPlayerTurnIndex!].userId) {
       console.log("uslo u handle player move frontend");
       socket?.emit("playerMove", { gameId, pawnIndex });
       return;
@@ -381,7 +395,7 @@ export const GameContextProvider = ({ children }: any) => {
   const contextValue: GameContextProps = {
     gameId,
     deleteGameState,
-    retrieveMultiplayerGameStats,
+    retrieveGameState,
     updateGameState,
     setGameId,
     setChosenPlayers,
@@ -399,7 +413,6 @@ export const GameContextProvider = ({ children }: any) => {
     higlightPawns,
     handleDiceThrow,
     handlePlayerMove,
-    retrieveGameStatus,
   };
 
   return (

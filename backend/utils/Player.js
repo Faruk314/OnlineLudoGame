@@ -12,9 +12,11 @@ export class Player {
   userName = null;
   image = null;
 
-  constructor({ color, userId }) {
+  constructor({ color, userId, userName, image }) {
     if (userId) {
       this.userId = userId;
+      this.userName = userName;
+      this.image = image;
     }
 
     if (!this.color) {

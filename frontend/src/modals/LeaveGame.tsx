@@ -8,17 +8,18 @@ interface Props {
 }
 
 const LeaveGame = ({ setOpenModal }: Props) => {
-  const { deleteGameState, gameId } = useContext(GameContext);
+  const { deleteGameState, gameId, players, currentPlayerTurnIndex } =
+    useContext(GameContext);
   const navigate = useNavigate();
   const { socket } = useContext(SocketContext);
 
   const leaveGameHandler = async () => {
     try {
-      if (gameId) {
+      if (currentPlayerTurnIndex && players[currentPlayerTurnIndex].userId) {
         socket?.emit("leaveGame", gameId);
       }
 
-      await deleteGameState();
+      await deleteGameState(gameId!);
       navigate("/menu");
     } catch (error) {
       console.log(error);

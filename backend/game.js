@@ -1,8 +1,10 @@
 import { Player } from "./utils/Player.js";
 import { safeZones } from "./utils/constants.js";
+import query from "./db.js";
 
-export const createGame = (usersIds) => {
+export const createGame = async (usersIds, gameId) => {
   const game = {
+    gameId: gameId,
     isGameOver: false,
     chosenPlayers: null,
     chosenColors: [],
@@ -22,9 +24,24 @@ export const createGame = (usersIds) => {
     game.playerTurns = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
   }
 
-  game.players = usersIds.map(
-    (userId, index) => new Player({ color: colors[index], userId: userId })
-  );
+  for (let i = 0; i < usersIds.length; i++) {
+    let playerId = usersIds[i];
+
+    let q =
+      "SELECT u.userName, u.userId, u.image FROM users u WHERE u.userId = ?";
+
+    let playerData = await query(q, [playerId]);
+
+    game.players.push(
+      new Player({
+        color: colors[i],
+        userId: playerData[0].userId,
+        userName: playerData[0].userName,
+        image: playerData[0].image,
+      })
+    );
+  }
+
   game.chosenColors = [colors[0], colors[1]];
   game.chosenPlayers = usersIds.length;
 

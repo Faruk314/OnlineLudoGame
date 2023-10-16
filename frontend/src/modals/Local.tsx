@@ -20,6 +20,21 @@ const Local = ({ setOpenLocal }: Props) => {
     setChosenPlayers(parseInt(e.target.value));
   };
 
+  const handleClick = async () => {
+    playSound(clickSound);
+
+    if (chosenPlayers === 4) {
+      const gameId = await initGame();
+
+      if (gameId) {
+        navigate(`/local/${gameId}`);
+        return;
+      }
+    }
+
+    setShowChoseColors(true);
+  };
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-center text-center bg-[rgb(0,0,0,0.5)]">
       {!showChoseColors && (
@@ -74,17 +89,7 @@ const Local = ({ setOpenLocal }: Props) => {
 
           <button
             disabled={chosenPlayers === 0 ? true : false}
-            onClick={() => {
-              playSound(clickSound);
-
-              if (chosenPlayers === 4) {
-                initGame();
-                navigate("/local");
-                return;
-              }
-
-              setShowChoseColors(true);
-            }}
+            onClick={handleClick}
             className="px-5 py-2 font-bold text-white bg-red-500 border border-black rounded-lg disabled:bg-gray-400 hover:bg-red-600 disabled:text-gray-200"
           >
             Continue

@@ -1,9 +1,9 @@
 import express from "express";
 import {
   deleteGameState,
-  getMultiplayerGameState,
+  getGameState,
+  getLeaderboard,
   initGame,
-  retrieveGameState,
   updateGameState,
 } from "../controllers/game.js";
 import { protect } from "../utils/protect.js";
@@ -12,12 +12,12 @@ const router = express.Router();
 
 router.post("/initGame", protect, initGame);
 
-router.get("/retrieveGameState", protect, retrieveGameState);
+router.get("/getLeaderboard", getLeaderboard);
 
 router.post("/updateGameState", protect, updateGameState);
 
-router.post("/getMultiplayerGameState", protect, getMultiplayerGameState);
+router.post("/getGameState", protect, getGameState);
 
-router.delete("/deleteGameState", protect, deleteGameState);
+router.delete("/deleteGameState/:gameId", protect, deleteGameState);
 
 export default router;

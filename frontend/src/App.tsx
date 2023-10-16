@@ -49,7 +49,7 @@ function App() {
 
   useEffect(() => {
     socket?.on("gameStart", (gameId) => {
-      navigate("/multiplayer");
+      navigate(`/multiplayer/${gameId}`);
     });
 
     return () => {
@@ -74,8 +74,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />
-        <Route path="/local" element={<SinglePlayer />} />
-        <Route path="/multiplayer" element={<Multiplayer />} />
+        <Route path="/local/:gameId" element={<SinglePlayer />} />
+        <Route path="/multiplayer/:gameId" element={<Multiplayer />} />
       </Routes>
 
       {openOpponentLeft && (

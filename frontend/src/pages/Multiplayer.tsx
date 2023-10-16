@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { GameContext } from "../context/GameContext";
-import { SoundContext } from "../context/SoundContext";
 import classNames from "classnames";
 import GameOver from "../modals/GameOver";
 import Board from "./Board";
-import { diceRoll } from "../constants/constants";
 import { SocketContext } from "../context/SocketContext";
 import { GameState } from "../types/types";
 import custom from "../assets/images/custom.png";
@@ -14,37 +12,36 @@ import custom2 from "../assets/images/custom2.png";
 import custom3 from "../assets/images/custom3.png";
 import custom4 from "../assets/images/custom4.png";
 import custom5 from "../assets/images/custom.png";
-import { AuthContext } from "../context/AuthContext";
 import SoundButton from "../components/SoundButton";
 import Exit from "../components/Exit";
 import Dice from "../components/Dice";
+import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const Multiplayer = () => {
-  const {
-    handleDiceThrow,
-    players,
-    randomNum,
-    currentPlayerTurnIndex,
-    isGameOver,
-    retrieveMultiplayerGameStats,
-    updateGameState,
-  } = useContext(GameContext);
-  const { playSound } = useContext(SoundContext);
+  const { players, isGameOver, retrieveGameState, updateGameState } =
+    useContext(GameContext);
   const { socket } = useContext(SocketContext);
   const [isLoading, setIsLoading] = useState(true);
   const avatars = [custom, custom1, custom2, custom3, custom4, custom5];
-  const { loggedUserInfo } = useContext(AuthContext);
+  const { gameId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGameData = async () => {
-      await retrieveMultiplayerGameStats();
+      const gameDataFetched = await retrieveGameState(gameId!);
+
+      if (!gameDataFetched) {
+        navigate("/menu");
+      }
+
       setIsLoading(false);
     };
 
-    if (isLoading) {
+    if (isLoading && gameId) {
       fetchGameData();
     }
-  }, [isLoading]);
+  }, []);
 
   useEffect(() => {
     socket?.on("diceRolled", (gameState: GameState) => {
@@ -67,11 +64,7 @@ const Multiplayer = () => {
   }, [socket]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[100vh]">
-        <div className="loader"></div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -90,13 +83,13 @@ const Multiplayer = () => {
           <div
             key={player.color}
             className={classNames("flex flex-col items-center", {
-              "absolute top-0 md:top-[-3rem] lg:top-[-2rem] left-0":
+              "absolute top-0 md:top-[-2rem] lg:top-[-3rem] left-0":
                 player.color === "red",
-              "absolute top-0 md:top-[-3rem] lg:top-[-5rem] right-0":
+              "absolute top-0 md:top-[-3rem] lg:top-[-3rem] right-0":
                 player.color === "green",
-              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-2rem] left-0":
+              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-3rem] left-0":
                 player.color === "blue",
-              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-2rem] right-0":
+              "absolute bottom-0 md:bottom-[-3rem] lg:bottom-[-3rem] right-0":
                 player.color === "yellow",
             })}
           >

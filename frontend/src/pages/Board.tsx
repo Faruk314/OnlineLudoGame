@@ -15,6 +15,7 @@ import yellowPawn from "../assets/images/yellowPawn.png";
 import greenPawn from "../assets/images/greenPawn.png";
 import bluePawn from "../assets/images/bluePawn.png";
 import { AuthContext } from "../context/AuthContext";
+import Loader from "../components/Loader";
 
 const Board = () => {
   const [cells, setCells] = useState<number[]>([]);
@@ -52,8 +53,6 @@ const Board = () => {
     );
   });
 
-  console.log(pawns, "pawns");
-
   return (
     <div className="board">
       {cells.map((cell, index) => {
@@ -61,7 +60,7 @@ const Board = () => {
 
         let isEnemyTurn = false;
 
-        if (gameId) {
+        if (currentPlayerTurnIndex && players[currentPlayerTurnIndex].userId) {
           if (
             players[currentPlayerTurnIndex!].userId !== loggedUserInfo?.userId
           )

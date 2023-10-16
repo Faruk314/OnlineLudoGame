@@ -34,6 +34,17 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
     }
   };
 
+  const handleClick = async () => {
+    playSound(clickSound);
+    const gameId = await initGame();
+
+    if (gameId) {
+      setShowChoseColors(true);
+
+      navigate(`/local/${gameId}`);
+    }
+  };
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-center text-center bg-[rgb(0,0,0,0.5)]">
       <div className="relative z-40 flex flex-col items-center justify-center px-[3rem] py-3 mx-2 space-y-4 bg-white rounded-md shadow-xl">
@@ -75,12 +86,7 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
 
         <button
           disabled={chosenColors.length !== chosenPlayers ? true : false}
-          onClick={() => {
-            playSound(clickSound);
-            setShowChoseColors(true);
-            initGame();
-            navigate("/local");
-          }}
+          onClick={handleClick}
           className="px-5 py-2 font-bold text-white bg-red-500 border border-black rounded-lg disabled:bg-gray-400 hover:bg-red-600 disabled:text-gray-200"
         >
           Next

@@ -145,14 +145,11 @@ export default function setupSocket() {
           playerOneSocket.join(gameId);
           playerTwoSocket.join(gameId);
 
-          let q =
-            "INSERT INTO games (`gameId`,`playerOne`,`playerTwo`) VALUES (?,?,?)";
-
-          let data = await query(q, [gameId, firstPlayerId, secondPlayerId]);
-
           let players = [firstPlayerId, secondPlayerId];
 
-          let gameState = createGame(players);
+          let gameState = await createGame(players, gameId);
+
+          console.log(gameState, "gameState");
 
           await client.set(gameId, JSON.stringify(gameState));
 
