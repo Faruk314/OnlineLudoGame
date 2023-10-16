@@ -10,7 +10,8 @@ interface Props {
 }
 
 const Local = ({ setOpenLocal }: Props) => {
-  const { setChosenPlayers, chosenPlayers, initGame } = useContext(GameContext);
+  const { setChosenPlayers, chosenPlayers, initGame, resetGameStates } =
+    useContext(GameContext);
   const [showChoseColors, setShowChoseColors] = useState(false);
   const navigate = useNavigate();
   const { playSound } = useContext(SoundContext);
@@ -27,6 +28,7 @@ const Local = ({ setOpenLocal }: Props) => {
       const gameId = await initGame();
 
       if (gameId) {
+        resetGameStates();
         navigate(`/local/${gameId}`);
         return;
       }

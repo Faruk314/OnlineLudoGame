@@ -24,7 +24,7 @@ const Board = () => {
     highlightedPawns,
     handlePlayerMove,
     currentPlayerTurnIndex,
-    gameId,
+    isMultiplayer,
   } = useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
 
@@ -60,7 +60,7 @@ const Board = () => {
 
         let isEnemyTurn = false;
 
-        if (currentPlayerTurnIndex && players[currentPlayerTurnIndex].userId) {
+        if (isMultiplayer) {
           if (
             players[currentPlayerTurnIndex!].userId !== loggedUserInfo?.userId
           )

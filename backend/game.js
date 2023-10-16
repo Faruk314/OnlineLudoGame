@@ -13,6 +13,7 @@ export const createGame = async (usersIds, gameId) => {
     randomNum: null,
     playerTurns: [],
     players: [],
+    isMultiplayer: true,
   };
   const colors = ["green", "red", "blue", "yellow"].sort(
     () => Math.random() - 0.5

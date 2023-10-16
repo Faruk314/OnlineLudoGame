@@ -18,6 +18,7 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
     setChosenColors,
     chosenColors,
     initGame,
+    resetGameStates,
   } = useContext(GameContext);
 
   const pickColorHandler = (color: string) => {
@@ -40,7 +41,7 @@ const ChoseColors = ({ setShowChoseColors }: Props) => {
 
     if (gameId) {
       setShowChoseColors(true);
-
+      resetGameStates();
       navigate(`/local/${gameId}`);
     }
   };

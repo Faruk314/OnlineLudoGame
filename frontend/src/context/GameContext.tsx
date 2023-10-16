@@ -33,6 +33,8 @@ interface GameContextProps {
   retrieveGameState: (gameId: string) => Promise<boolean>;
   updateGameState: (gameState: GameState) => void;
   deleteGameState: (gameId: string) => Promise<void>;
+  isMultiplayer: boolean;
+  resetGameStates: () => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -56,9 +58,12 @@ export const GameContext = createContext<GameContextProps>({
   retrieveGameState: async (gameId) => false,
   deleteGameState: async (gameId) => {},
   updateGameState: (gameState) => {},
+  isMultiplayer: false,
+  resetGameStates: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [isMultiplayer, setIsMultiplayer] = useState(false);
   const [gameId, setGameId] = useState<string | null>(null);
   const [isGameOver, setGameOver] = useState(false);
   const [chosenColors, setChosenColors] = useState<string[]>([]);
@@ -83,9 +88,10 @@ export const GameContextProvider = ({ children }: any) => {
     setChosenColors(gameState.chosenColors);
     setChosenPlayers(gameState.chosenPlayers);
     setRandomNum(gameState.randomNum);
+    setIsMultiplayer(gameState.isMultiplayer);
   };
 
-  const retrieveGameState = useCallback(async (gameId: string) => {
+  const retrieveGameState = async (gameId: string) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/game/getGameState",
@@ -106,6 +112,7 @@ export const GameContextProvider = ({ children }: any) => {
         randomNum: gameState.randomNum,
         chosenPlayers: gameState.chosenPlayers,
         chosenColors: gameState.chosenColors,
+        isMultiplayer: gameState.isMultiplayer,
       });
 
       return true;
@@ -114,7 +121,7 @@ export const GameContextProvider = ({ children }: any) => {
 
       return false;
     }
-  }, []);
+  };
 
   const initGame = async () => {
     try {
@@ -169,6 +176,7 @@ export const GameContextProvider = ({ children }: any) => {
         randomNum,
         playerTurns,
         players,
+        isMultiplayer,
       };
 
       try {
@@ -201,6 +209,7 @@ export const GameContextProvider = ({ children }: any) => {
     setChosenColors([]);
     setChosenPlayers(0);
     setRandomNum(null);
+    setIsMultiplayer(false);
   };
 
   const deleteGameState = async (gameId: string) => {
@@ -261,7 +270,7 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   const handleDiceThrow = () => {
-    if (players[currentPlayerTurnIndex!].userId !== null) {
+    if (isMultiplayer) {
       console.log("uslo u dice throw");
       socket?.emit("diceRoll", gameId);
       return;
@@ -318,7 +327,7 @@ export const GameContextProvider = ({ children }: any) => {
   const handlePlayerMove = (pawnIndex: number) => {
     playSound(move);
 
-    if (players[currentPlayerTurnIndex!].userId) {
+    if (isMultiplayer) {
       console.log("uslo u handle player move frontend");
       socket?.emit("playerMove", { gameId, pawnIndex });
       return;
@@ -413,6 +422,8 @@ export const GameContextProvider = ({ children }: any) => {
     higlightPawns,
     handleDiceThrow,
     handlePlayerMove,
+    isMultiplayer,
+    resetGameStates,
   };
 
   return (

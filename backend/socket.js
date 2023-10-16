@@ -77,84 +77,37 @@ export default function setupSocket() {
       console.log("disconnected");
     });
 
-    socket.on("findMatch", async (playersNumber) => {
-      if (playersNumber !== 2 && playersNumber !== 4) {
-        console.log("Invalid number of players");
-        return;
+    socket.on("findMatch", async () => {
+      if (!twoPlayersQueue.includes(socket.userId)) {
+        twoPlayersQueue.push(socket.userId);
       }
 
-      if (playersNumber === 4) {
-        if (!fourPlayerQueue.includes(socket.userId)) {
-          fourPlayerQueue.push(socket.userId);
+      if (twoPlayersQueue.length > 1) {
+        const firstPlayerId = twoPlayersQueue.splice(0, 1)[0];
+        const secondPlayerId = twoPlayersQueue.splice(0, 1)[0];
+
+        const playerOnesocketId = getUser(firstPlayerId);
+        const playerTwoSocketId = getUser(secondPlayerId);
+
+        if (!playerOnesocketId || !playerTwoSocketId) {
+          return console.log("playerSocketId not found!");
         }
 
-        if (fourPlayerQueue.length > 3) {
-          const players = [];
-          const gameId = uuidv4();
+        const playerOneSocket = io.sockets.sockets.get(playerOnesocketId);
+        const playerTwoSocket = io.sockets.sockets.get(playerTwoSocketId);
 
-          for (let i = 0; i < 4; i++) {
-            const playerId = fourPlayerQueue.splice(0, 1)[0];
-            players.push(playerId);
-            const socketId = getUser(playerId);
-            const playerSocket = io.sockets.sockets.get(socketId);
-            playerSocket.join(gameId);
-          }
+        let gameId = uuidv4();
 
-          const [firstPlayerId, secondPlayerId, thirdPlayerId, fourthPlayerId] =
-            players;
+        playerOneSocket.join(gameId);
+        playerTwoSocket.join(gameId);
 
-          let q =
-            "INSERT INTO games (`gameId`,`playerOne`,`playerTwo`,`playerThree`,`playerFour`) VALUES (?,?,?,?,?)";
+        let players = [firstPlayerId, secondPlayerId];
 
-          let data = await query(q, [
-            gameId,
-            firstPlayerId,
-            secondPlayerId,
-            thirdPlayerId,
-            fourthPlayerId,
-          ]);
+        let gameState = await createGame(players, gameId);
 
-          let gameState = createGame(players);
-          await client.set(gameId, JSON.stringify(gameState));
+        await client.set(gameId, JSON.stringify(gameState));
 
-          io.to(gameId).emit("gameStart", gameId);
-        }
-      }
-
-      if (playersNumber === 2) {
-        if (!twoPlayersQueue.includes(socket.userId)) {
-          twoPlayersQueue.push(socket.userId);
-        }
-
-        if (twoPlayersQueue.length > 1) {
-          const firstPlayerId = twoPlayersQueue.splice(0, 1)[0];
-          const secondPlayerId = twoPlayersQueue.splice(0, 1)[0];
-
-          const playerOnesocketId = getUser(firstPlayerId);
-          const playerTwoSocketId = getUser(secondPlayerId);
-
-          if (!playerOnesocketId || !playerTwoSocketId) {
-            return console.log("playerSocketId not found!");
-          }
-
-          const playerOneSocket = io.sockets.sockets.get(playerOnesocketId);
-          const playerTwoSocket = io.sockets.sockets.get(playerTwoSocketId);
-
-          let gameId = uuidv4();
-
-          playerOneSocket.join(gameId);
-          playerTwoSocket.join(gameId);
-
-          let players = [firstPlayerId, secondPlayerId];
-
-          let gameState = await createGame(players, gameId);
-
-          console.log(gameState, "gameState");
-
-          await client.set(gameId, JSON.stringify(gameState));
-
-          io.to(gameId).emit("gameStart", gameId);
-        }
+        io.to(gameId).emit("gameStart", gameId);
       }
     });
 
@@ -201,14 +154,8 @@ export default function setupSocket() {
     });
 
     socket.on("leaveGame", async (gameId) => {
-      try {
-        let q = "DELETE FROM games WHERE `gameId`= ?";
+      await client.del(gameId);
 
-        await query(q, [gameId]);
-        await client.del(gameId);
-      } catch (error) {
-        throw new Error("could not delete game state");
-      }
       socket.leave(gameId);
 
       io.to(gameId).emit("opponentLeft");

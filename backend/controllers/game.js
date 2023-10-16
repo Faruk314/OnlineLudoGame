@@ -21,6 +21,7 @@ export const initGame = asyncHandler(async (req, res) => {
     randomNum: null,
     playerTurns: [],
     players: [],
+    isMultiplayer: false,
   };
 
   if (chosenplayersNum === 4) {

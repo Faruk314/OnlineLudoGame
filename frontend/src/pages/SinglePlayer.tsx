@@ -31,10 +31,8 @@ const SinglePlayer = () => {
       setLoading(false);
     };
 
-    if (loading) {
-      getGameState();
-    }
-  }, [gameId, loading, navigate, retrieveGameState]);
+    getGameState();
+  }, []);
 
   if (loading) {
     return <Loader />;

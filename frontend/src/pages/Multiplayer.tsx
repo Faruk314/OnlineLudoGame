@@ -83,7 +83,7 @@ const Multiplayer = () => {
           <div
             key={player.color}
             className={classNames("flex flex-col items-center", {
-              "absolute top-0 md:top-[-2rem] lg:top-[-3rem] left-0":
+              "absolute top-0 md:top-[-3rem] lg:top-[-3rem] left-0":
                 player.color === "red",
               "absolute top-0 md:top-[-3rem] lg:top-[-3rem] right-0":
                 player.color === "green",

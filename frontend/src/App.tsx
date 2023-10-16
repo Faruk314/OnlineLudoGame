@@ -10,6 +10,7 @@ import Multiplayer from "./pages/Multiplayer";
 import { SocketContext } from "./context/SocketContext";
 import { GameContext } from "./context/GameContext";
 import OpponentLeft from "./modals/OpponentLeft";
+import Loader from "./components/Loader";
 
 axios.defaults.withCredentials = true;
 
@@ -20,6 +21,7 @@ function App() {
   const { socket } = useContext(SocketContext);
   const { gameId } = useContext(GameContext);
   const [openOpponentLeft, setOpenOpponentLeft] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -28,11 +30,13 @@ function App() {
           "http://localhost:5000/api/auth/getLoginStatus"
         );
 
+        setLoading(false);
         setIsLoggedIn(response.data.status);
         setLoggedUserInfo(response.data.userInfo);
       } catch (error) {
         console.log(error);
         setIsLoggedIn(false);
+        setLoading(false);
       }
     };
 
@@ -67,6 +71,10 @@ function App() {
       socket?.off("opponentLeft");
     };
   }, [socket, navigate]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div className="font-bold">

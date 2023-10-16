@@ -23,4 +23,5 @@ export interface GameState {
   chosenColors: string[];
   randomNum: number;
   chosenPlayers: number;
+  isMultiplayer: boolean;
 }
