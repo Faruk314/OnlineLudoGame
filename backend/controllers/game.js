@@ -45,6 +45,8 @@ export const initGame = asyncHandler(async (req, res) => {
 
   try {
     await client.set(gameId, JSON.stringify(game));
+
+    console.log("set in nodejs backend");
     res.status(200).json(gameId);
   } catch (error) {
     throw new Error("Could not update db in initGame controller");
@@ -56,6 +58,8 @@ export const updateGameState = asyncHandler(async (req, res) => {
 
   try {
     await client.set(updatedGameState.gameId, JSON.stringify(updatedGameState));
+
+    console.log("set in updateGameState nodejs");
     res.status(200).json("Game updated successfully");
   } catch (error) {
     res.status(400);
@@ -87,7 +91,7 @@ export const getGameState = asyncHandler(async (req, res) => {
 export const getLeaderboard = asyncHandler(async (req, res) => {
   try {
     let q =
-      "SELECT  u.userId, u.userName, lb.wins FROM users u JOIN leaderboard lb ON u.userId=lb.userId ORDER BY lb.score DESC";
+      "SELECT u.userId, u.userName, lb.wins FROM users u JOIN leaderboard lb ON u.userId=lb.userId ORDER BY lb.score DESC";
 
     let data = await query(q, []);
 

@@ -49,6 +49,21 @@ export const createGame = async (usersIds, gameId) => {
   return game;
 };
 
+export const updateLeaderboard = async (userId) => {
+  try {
+    let q =
+      "INSERT INTO leaderboard (`userId`, `wins`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `wins` = `wins` + ?";
+
+    await query(q, [userId, 1, 1]);
+
+    return true;
+  } catch (error) {
+    console.log(error);
+
+    return false;
+  }
+};
+
 const switchTurns = (gameState) => {
   let nextPlayerTurn = gameState.currentPlayerTurnIndex + 1;
 
@@ -62,7 +77,12 @@ const switchTurns = (gameState) => {
 export const highlightPawns = (gameState) => {
   const playerOnMove = gameState.players[gameState.currentPlayerTurnIndex];
   const highlighted = [];
+
   const randomNum = Math.floor(Math.random() * 6 + 1);
+  // const randomNum = 2;
+  // gameState.players[gameState.currentPlayerTurnIndex].pawnPositions = [
+  //   116, 116, 116, 116,
+  // ];
 
   gameState.randomNum = randomNum;
 

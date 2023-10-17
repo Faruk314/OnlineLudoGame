@@ -188,7 +188,9 @@ export const GameContextProvider = ({ children }: any) => {
       }
     };
 
-    updateGameState();
+    if (!isMultiplayer) {
+      updateGameState();
+    }
   }, [
     currentPlayerTurnIndex,
     isGameOver,

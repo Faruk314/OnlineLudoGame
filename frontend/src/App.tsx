@@ -13,6 +13,7 @@ import OpponentLeft from "./modals/OpponentLeft";
 import Loader from "./components/Loader";
 import ProtectedAuthPages from "./protection/ProtectedAuthPages";
 import ProtectedRoutes from "./protection/ProtectedRoutes";
+import GameOver from "./modals/GameOver";
 
 axios.defaults.withCredentials = true;
 
@@ -21,7 +22,7 @@ function App() {
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
-  const { gameId } = useContext(GameContext);
+  const { gameId, isGameOver } = useContext(GameContext);
   const [openOpponentLeft, setOpenOpponentLeft] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -95,6 +96,7 @@ function App() {
       {openOpponentLeft && (
         <OpponentLeft setOpenOpponentLeft={setOpenOpponentLeft} />
       )}
+      {isGameOver && <GameOver />}
     </div>
   );
 }

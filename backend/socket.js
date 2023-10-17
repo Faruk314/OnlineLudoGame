@@ -4,7 +4,12 @@ import jwt from "jsonwebtoken";
 import query from "./db.js";
 import { client } from "./app.js";
 import { v4 as uuidv4 } from "uuid";
-import { createGame, handlePlayerMove, highlightPawns } from "./game.js";
+import {
+  createGame,
+  handlePlayerMove,
+  highlightPawns,
+  updateLeaderboard,
+} from "./game.js";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -107,6 +112,8 @@ export default function setupSocket() {
 
         await client.set(gameId, JSON.stringify(gameState));
 
+        console.log("set in find match");
+
         io.to(gameId).emit("gameStart", gameId);
       }
     });
@@ -125,6 +132,8 @@ export default function setupSocket() {
 
       await client.set(gameId, JSON.stringify(gameState));
 
+      console.log("set in dice roll");
+
       io.to(gameId).emit("diceRolled", { gameId, ...gameState });
     });
 
@@ -135,16 +144,32 @@ export default function setupSocket() {
 
       handlePlayerMove(gameState, data.pawnIndex);
 
-      await client.set(data.gameId, JSON.stringify(gameState));
+      let result = await client.set(data.gameId, JSON.stringify(gameState));
+
+      console.log("set in player move");
+
+      let leaderboardUpdated;
+
+      if (gameState.isGameOver) {
+        const winner =
+          gameState.players[gameState.currentPlayerTurnIndex].userId;
+        leaderboardUpdated = await updateLeaderboard(winner);
+      }
 
       io.to(data.gameId).emit("playerMoved", {
         gameId: data.gameId,
         ...gameState,
       });
+
+      if (leaderboardUpdated && result === "OK") {
+        await client.del(data.gameId);
+      }
     });
 
     socket.on("leaveGame", async (gameId) => {
       await client.del(gameId);
+
+      console.log(gameId, "gid");
 
       socket.leave(gameId);
 

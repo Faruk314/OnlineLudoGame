@@ -19,7 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const Multiplayer = () => {
-  const { players, isGameOver, retrieveGameState, updateGameState } =
+  const { players, retrieveGameState, updateGameState } =
     useContext(GameContext);
   const { socket } = useContext(SocketContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,12 +56,16 @@ const Multiplayer = () => {
   useEffect(() => {
     socket?.on("playerMoved", (gameState: GameState) => {
       updateGameState(gameState);
+
+      if (gameState.isGameOver) {
+        navigate("/menu");
+      }
     });
 
     return () => {
       socket?.off("playerMoved");
     };
-  }, [socket]);
+  }, [socket, navigate]);
 
   if (isLoading) {
     return <Loader />;
@@ -129,7 +133,6 @@ const Multiplayer = () => {
 
         <Board />
       </div>
-      {isGameOver && <GameOver />}
     </section>
   );
 };

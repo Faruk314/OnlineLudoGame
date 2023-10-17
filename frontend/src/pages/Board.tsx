@@ -175,48 +175,6 @@ const Board = () => {
               })}
             </div>
 
-            {/* <div
-              onClick={() =>
-                isHighlighted && !isEnemyTurn && handlePlayerMove(cell + 1)
-              }
-              className={classNames(
-                "absolute top-[-0.5rem] md:top-[-1rem] cursor-pointer z-20",
-                {
-                  "border-2 border-black rounded-full":
-                    isHighlighted && !isEnemyTurn,
-                }
-              )}
-            >
-              {pawn?.color === "red" && (
-                <img
-                  className="h-[1.5rem] md:h-[2.5rem]"
-                  src={redPawn}
-                  alt=""
-                />
-              )}
-              {pawn?.color === "yellow" && (
-                <img
-                  className="h-[1.5rem] md:h-[2.5rem]"
-                  src={yellowPawn}
-                  alt=""
-                />
-              )}
-              {pawn?.color === "blue" && (
-                <img
-                  className="h-[1.5rem] md:h-[2.5rem]"
-                  src={bluePawn}
-                  alt=""
-                />
-              )}
-              {pawn?.color === "green" && (
-                <img
-                  className=" h-[1.5rem] md:h-[2.5rem]"
-                  src={greenPawn}
-                  alt=""
-                />
-              )}
-            </div> */}
-
             {/* {cell + 1} */}
           </div>
         );
