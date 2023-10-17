@@ -1,7 +1,6 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
-import query from "./db.js";
 import { client } from "./app.js";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -10,6 +9,12 @@ import {
   highlightPawns,
   updateLeaderboard,
 } from "./game.js";
+import {
+  addUser,
+  getUser,
+  removeUser,
+  twoPlayersQueue,
+} from "./maps/userMap.js";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -33,34 +38,6 @@ export default function setupSocket() {
       console.log(error);
     }
   });
-
-  let users = new Map();
-
-  //users that are searching for 2 players match
-  let twoPlayersQueue = [];
-
-  //users that are searching for 4 players match
-  let fourPlayerQueue = [];
-
-  const addUser = (userId, socketId) => {
-    if (!users.has(userId)) {
-      users.set(userId, socketId);
-    }
-  };
-
-  const removeUser = (socketId) => {
-    const userEntries = [...users.entries()];
-
-    const usersEntriesFilterd = userEntries.filter(
-      ([_, value]) => value !== socketId
-    );
-
-    users = new Map(usersEntriesFilterd);
-  };
-
-  const getUser = (userId) => {
-    return users.get(userId);
-  };
 
   io.on("connection", (socket) => {
     console.log("new socket connection", socket.userId);
