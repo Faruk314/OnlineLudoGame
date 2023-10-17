@@ -1,16 +1,34 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 interface Props {
   setOpenLeaderboard: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface Col {
+  userId: number;
+  userName: string;
+  wins: number;
+}
+
 const Leaderboard = ({ setOpenLeaderboard }: Props) => {
-  const leaderboard = [
-    { userId: 1, userName: "faruk", score: 10 },
-    { userId: 1, userName: "faruk", score: 10 },
-    { userId: 1, userName: "faruk", score: 10 },
-    { userId: 1, userName: "faruk", score: 10 },
-  ];
+  const [leaderboard, setLeaderboard] = useState<Col[]>([]);
+
+  useEffect(() => {
+    const getLeaderBoard = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/game/getLeaderboard"
+        );
+
+        setLeaderboard(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getLeaderBoard();
+  }, []);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
@@ -35,11 +53,11 @@ const Leaderboard = ({ setOpenLeaderboard }: Props) => {
             </div>
 
             <div className="flex items-center justify-center w-[5rem] h-10 px-3 bg-red-500 rounded-tr-md ">
-              <span>SCORE</span>
+              <span>WINS</span>
             </div>
           </div>
 
-          {leaderboard.map((row, index) => (
+          {leaderboard?.map((row, index) => (
             <div key={row.userId} className="flex text-black">
               <div className="flex items-center justify-center h-10 border-b border-x border-black w-[5rem] px-3">
                 <span>{index + 1}</span>
@@ -50,7 +68,7 @@ const Leaderboard = ({ setOpenLeaderboard }: Props) => {
               </div>
 
               <div className="flex items-center justify-center w-[5rem] h-10 px-3 border-b border-r border-black">
-                <span>{row.score}</span>
+                <span>{row.wins}</span>
               </div>
             </div>
           ))}

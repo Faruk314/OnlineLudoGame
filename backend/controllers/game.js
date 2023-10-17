@@ -89,7 +89,7 @@ export const getGameState = asyncHandler(async (req, res) => {
 export const getLeaderboard = asyncHandler(async (req, res) => {
   try {
     let q =
-      "SELECT u.userId, u.userName, lb.wins FROM users u JOIN leaderboard lb ON u.userId=lb.userId ORDER BY lb.score DESC";
+      "SELECT u.userId, u.userName, lb.wins FROM users u JOIN leaderboard lb ON u.userId=lb.userId ORDER BY lb.wins DESC";
 
     let data = await query(q, []);
 
