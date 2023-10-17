@@ -1,8 +1,5 @@
 let users = new Map();
 
-//users that are searching for 2 players match
-let twoPlayersQueue = [];
-
 const addUser = (userId, socketId) => {
   if (!users.has(userId)) {
     users.set(userId, socketId);
@@ -23,4 +20,4 @@ const getUser = (userId) => {
   return users.get(userId);
 };
 
-export { users, twoPlayersQueue, addUser, removeUser, getUser };
+export { users, addUser, removeUser, getUser };

@@ -44,6 +44,14 @@ const Multiplayer = () => {
   }, []);
 
   useEffect(() => {
+    if (gameId) socket?.emit("reconnectToRoom", gameId);
+
+    return () => {
+      if (gameId) socket?.emit("leaveRoom");
+    };
+  }, [gameId]);
+
+  useEffect(() => {
     socket?.on("diceRolled", (gameState: GameState) => {
       updateGameState(gameState);
     });

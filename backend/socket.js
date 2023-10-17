@@ -5,16 +5,15 @@ import { client } from "./app.js";
 import { v4 as uuidv4 } from "uuid";
 import {
   createGame,
+  handlePlayerLeaving,
   handlePlayerMove,
   highlightPawns,
   updateLeaderboard,
 } from "./game.js";
-import {
-  addUser,
-  getUser,
-  removeUser,
-  twoPlayersQueue,
-} from "./maps/userMap.js";
+import { addUser, getUser, removeUser } from "./maps/userMap.js";
+import { addToGameMap } from "./maps/gameMap.js";
+
+let twoPlayersQueue = [];
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -51,12 +50,23 @@ export default function setupSocket() {
         const userSocket = io.sockets.sockets.get(userSocketId);
 
         userSocket.join(gameId);
+        addToGameMap(socket.userId, gameId);
       }
     });
 
-    socket.on("disconnect", () => {
+    socket.on("leaveRoom", async () => {
+      const userId = socket.userId;
+
+      await handlePlayerLeaving(io, userId);
+    });
+
+    socket.on("disconnect", async () => {
       removeUser(socket.id);
       console.log("disconnected");
+
+      const userId = socket.userId;
+
+      await handlePlayerLeaving(io, userId);
     });
 
     socket.on("findMatch", async () => {
@@ -88,6 +98,9 @@ export default function setupSocket() {
         let gameState = await createGame(players, gameId);
 
         await client.set(gameId, JSON.stringify(gameState));
+
+        addToGameMap(firstPlayerId, gameId);
+        addToGameMap(secondPlayerId, gameId);
 
         io.to(gameId).emit("gameStart", gameId);
       }

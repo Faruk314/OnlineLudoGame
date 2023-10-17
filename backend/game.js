@@ -1,6 +1,56 @@
 import { Player } from "./utils/Player.js";
 import { safeZones } from "./utils/constants.js";
 import query from "./db.js";
+import { client } from "./app.js";
+import { getUser } from "./maps/userMap.js";
+import { getGameId, removeUserFromGameMap, games } from "./maps/gameMap.js";
+
+export const handlePlayerLeaving = async (io, userId) => {
+  if (!userId)
+    return console.log("User id does not exist in disconnect method");
+
+  let countdown = 5000;
+
+  //getGameId and remove the user
+  let gameId = getGameId(userId);
+  removeUserFromGameMap(userId);
+
+  if (!gameId)
+    return console.log("Could not get the game id in disconnect method");
+
+  let gameData = await client.get(gameId);
+  let gameState = JSON.parse(gameData);
+
+  console.log(gameState, "gameState");
+
+  if (!gameState) return console.log("Could not find game state in disconnect");
+
+  const opponentId = gameState.players.find(
+    (player) => player.userId !== userId
+  ).userId;
+
+  if (!opponentId)
+    return console.log("Could not get opponentId in disconnect function");
+
+  const opponentSocketId = getUser(opponentId);
+
+  setTimeout(async () => {
+    if (!games.has(userId)) {
+      let gameData = await client.get(gameId);
+      let gameStateExists = JSON.parse(gameData);
+
+      if (!gameStateExists) return console.log("Game state does not exist");
+
+      await client.del(gameId);
+
+      io.to(opponentSocketId).emit("opponentLeft");
+    }
+
+    if (!games.has(userId) && !games.has(opponentId)) {
+      await client.del(gameId);
+    }
+  }, countdown);
+};
 
 export const createGame = async (usersIds, gameId) => {
   const game = {
