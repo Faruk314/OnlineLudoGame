@@ -55,6 +55,11 @@ export const initGame = asyncHandler(async (req, res) => {
 export const updateGameState = asyncHandler(async (req, res) => {
   const { updatedGameState } = req.body;
 
+  const gameData = await client.get(updatedGameState.gameId);
+  const gameState = JSON.parse(gameData);
+
+  if (gameState.isMultiplayer) return;
+
   try {
     await client.set(updatedGameState.gameId, JSON.stringify(updatedGameState));
 
