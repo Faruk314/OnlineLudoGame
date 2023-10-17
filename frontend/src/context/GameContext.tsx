@@ -143,27 +143,6 @@ export const GameContextProvider = ({ children }: any) => {
     }
   };
 
-  // const retrieveGameStatus = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:5000/api/game/retrieveGameState"
-  //     );
-
-  //     console.log(response.data);
-
-  //     setPlayers(response.data.players);
-  //     setCurrentPlayerTurnIndex(response.data.currentPlayerTurnIndex);
-  //     setHighlightedPawns(response.data.highlightedPawns);
-  //     setPlayerTurns(response.data.playerTurns);
-  //     setChosenPlayers(response.data.chosenPlayers);
-  //     setChosenColors(response.data.chosenColors);
-  //     setGameOver(response.data.isGameOver);
-  //     setRandomNum(response.data.randomNum);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   useEffect(() => {
     const updateGameState = async () => {
       const game = {
@@ -273,18 +252,13 @@ export const GameContextProvider = ({ children }: any) => {
 
   const handleDiceThrow = () => {
     if (isMultiplayer) {
-      console.log("uslo u dice throw");
       socket?.emit("diceRoll", gameId);
       return;
     }
 
     const randomNum = Math.floor(Math.random() * 6 + 1);
 
-    console.log(randomNum, "randomNum");
-
     const highlighted = higlightPawns(randomNum);
-
-    console.log(highlighted, "higligthed");
 
     if (highlighted.length > 0) {
       setHighlightedPawns(highlighted);
@@ -330,7 +304,6 @@ export const GameContextProvider = ({ children }: any) => {
     playSound(move);
 
     if (isMultiplayer) {
-      console.log("uslo u handle player move frontend");
       socket?.emit("playerMove", { gameId, pawnIndex });
       return;
     }
@@ -372,8 +345,6 @@ export const GameContextProvider = ({ children }: any) => {
 
       //check if the pawn is at last position
       let isOnLastPosition = nextPosiblePosition === playerOnMove.endpoint;
-
-      console.log(isOnLastPosition, "isOnLastPosition");
 
       //this function checks if the game is over
       if (isOnLastPosition) {

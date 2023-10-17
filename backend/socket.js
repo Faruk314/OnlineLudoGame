@@ -112,8 +112,6 @@ export default function setupSocket() {
 
         await client.set(gameId, JSON.stringify(gameState));
 
-        console.log("set in find match");
-
         io.to(gameId).emit("gameStart", gameId);
       }
     });
@@ -132,21 +130,16 @@ export default function setupSocket() {
 
       await client.set(gameId, JSON.stringify(gameState));
 
-      console.log("set in dice roll");
-
       io.to(gameId).emit("diceRolled", { gameId, ...gameState });
     });
 
     socket.on("playerMove", async (data) => {
-      console.log("uslo u playerMove backend socket.io");
       const gameData = await client.get(data.gameId);
       let gameState = JSON.parse(gameData);
 
       handlePlayerMove(gameState, data.pawnIndex);
 
       let result = await client.set(data.gameId, JSON.stringify(gameState));
-
-      console.log("set in player move");
 
       let leaderboardUpdated;
 
