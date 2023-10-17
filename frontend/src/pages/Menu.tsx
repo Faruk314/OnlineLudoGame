@@ -33,13 +33,14 @@ const Menu = () => {
   const [openLocal, setOpenLocal] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { playSound } = useContext(SoundContext);
-  const { loggedUserInfo } = useContext(AuthContext);
+  const { loggedUserInfo, setIsLoggedIn } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
 
   const logoutHandler = async () => {
     try {
       await axios.get("http://localhost:5000/api/auth/logout");
 
+      setIsLoggedIn(false);
       navigate("/");
     } catch (error) {
       console.log(error);
